@@ -1,32 +1,73 @@
+import Carousel from "@/components/carousel";
 import { Button } from "@/components/ui/button";
-import { stripe } from "@/lib/stripe"
+import { stripe } from "@/lib/stripe";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function Home() {
 
   const products = await stripe.products.list({
-    expand: ['data.default_price'],
+    expand: ["data.default_price"],
     limit: 5,
   });
 
-  console.log(products)
-
   return (
-    <div>
-      <section>
+    <main className="min-h-screen">
 
-        <div>
-          <div>
-            <h2>Welcome to Clothique</h2>
-            <p>Step into style with Clothique, your destination for premium fashion. Discover our latest collection of high-quality apparel and elevate your wardrobe today.</p>
+      {/* Hero Section */}
+      <section className="flex min-h-[60vh] items-center py-10">
+
+        <div className="mx-auto flex h-[50vh] w-full max-w-6xl items-center rounded-3xl bg-neutral-100 px-8 sm:px-12">
+
+          <div className="grid w-full grid-cols-1 items-center gap-8 md:grid-cols-2">
+
+            {/* Left Content */}
+            <div className="space-y-5">
+
+              <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
+                Welcome to Clothique
+              </h1>
+
+              <p className="max-w-md text-neutral-600">
+                Step into style with Clothique, your destination for premium fashion.
+                Discover our latest collection of high-quality apparel and elevate
+                your wardrobe today.
+              </p>
+
+              <Button asChild className="rounded-full bg-black px-8 py-6 text-white hover:bg-neutral-800">
+                <Link href="/products">
+                  Shop Now
+                </Link>
+              </Button>
+
+            </div>
+
+
+            {/* Right Image */}
+            <div className="flex h-full items-center justify-center overflow-visible">
+
+              <Image
+                src={products.data[4].images[0]}
+                alt="Hoodie"
+                width={700}
+                height={700}
+                className="h-auto w-[250px] object-contain scale-110"
+              />
+
+            </div>
+
           </div>
 
-          <Button asChild variant="default">
-            <Link href="/products">Shop Now</Link>
-          </Button>
         </div>
 
       </section>
-    </div>
+
+
+      {/* Carousel Section */}
+      <section className="mx-auto max-w-6xl px-6 pb-10">
+        <Carousel />
+      </section>
+
+    </main>
   );
 }
