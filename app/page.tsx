@@ -24,7 +24,7 @@ export default async function Home() {
             {/* Left Content */}
             <div className="space-y-5">
 
-              <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
+              <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
                 Welcome to Clothique
               </h1>
 
@@ -34,7 +34,7 @@ export default async function Home() {
                 your wardrobe today.
               </p>
 
-              <Button asChild className="rounded-full bg-black px-8 py-6 text-white hover:bg-neutral-800">
+              <Button asChild className="rounded-full bg-black px-8 py-6 text-white hover:bg-neutral-800 hover:cursor-pointer hover:scale-110">
                 <Link href="/products">
                   Shop Now
                 </Link>
@@ -47,11 +47,11 @@ export default async function Home() {
             <div className="flex h-full items-center justify-center overflow-visible">
 
               <Image
-                src={products.data[4].images[0]}
+                src={products.data[0].images[0]}
                 alt="Hoodie"
-                width={700}
-                height={700}
-                className="h-auto w-[250px] object-contain scale-110"
+                width={900}
+                height={900}
+                className="h-auto w-[325px] object-contain scale-110"
               />
 
             </div>

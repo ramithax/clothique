@@ -15,6 +15,7 @@ export const Navbar = () => {
                     <Link href="/" className="hover:text-red-500 transition">Home</Link>
                     <Link href="/products" className="hover:text-red-500 transition">Products</Link>
                     <Link href="/checkout" className="hover:text-red-500 transition">Checkout</Link>
+                    <Link href="/about">About</Link>
                 </div>
 
                 <div className="flex items-center space-x-4">

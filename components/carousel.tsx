@@ -31,13 +31,14 @@ export default function Carousel({ products }: Props) {
         <Card className="group relative h-[450px] overflow-hidden rounded-3xl border-none shadow-xl">
 
             {currentProduct.images?.[0] && (
-                <div className="relative h-full w-full">
+                <div className="flex h-full w-full items-center justify-center">
 
                     <Image
                         src={currentProduct.images[0]}
-                        fill
+                        width={800}
+                        height={800}
                         alt={currentProduct.name}
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="object-contain transition-transform duration-700 group-hover:scale-105"
                     />
 
                 </div>
