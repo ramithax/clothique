@@ -65,7 +65,7 @@ export default async function Home() {
 
       {/* Carousel Section */}
       <section className="mx-auto max-w-6xl px-6 pb-10">
-        <Carousel />
+        <Carousel products={products.data} />
       </section>
 
     </main>
