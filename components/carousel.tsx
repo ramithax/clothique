@@ -23,16 +23,31 @@ export default function Carousel() {
     }, [images.length])
 
     return (
-        <Card className="group relative w-[1100px] h-[450px] overflow-hidden rounded-3xl border-none shadow-xl p-0">
+        <Card className="
+            group 
+            relative 
+            w-full 
+            h-[200px]
+            sm:h-[300px]
+            md:h-[400px]
+            lg:h-[450px]
+            overflow-hidden 
+            rounded-3xl 
+            border-none 
+            shadow-xl 
+            p-0
+        ">
 
             <div className="relative w-full h-full">
+
                 <Image
                     src={images[current]}
                     alt="carousel image"
                     fill
                     priority
-                    className="object-cover "
+                    className="object-cover"
                 />
+
             </div>
 
         </Card>
