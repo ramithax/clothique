@@ -8,7 +8,7 @@ export default async function Home() {
 
   const products = await stripe.products.list({
     expand: ["data.default_price"],
-    limit: 5,
+    limit: 8,
   });
 
   return (
@@ -47,7 +47,7 @@ export default async function Home() {
             <div className="flex h-full items-center justify-center overflow-visible">
 
               <Image
-                src={products.data[0].images[0]}
+                src={products.data[7].images[0]}
                 alt="Hoodie"
                 width={900}
                 height={900}

@@ -12,5 +12,7 @@ export default async function ProductDetailsPage({
         expand: ["default_price"],
     })
 
-    return <ProductDetail product={product} />
+    const plainProduct = JSON.parse(JSON.stringify(product))
+
+    return <ProductDetail product={plainProduct} />
 }
