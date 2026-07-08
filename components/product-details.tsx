@@ -39,7 +39,7 @@ export const ProductDetail = ({ product }: Props) => {
                             src={product.images[0]}
                             alt={product.name}
                             fill
-                            className="object-cover transition duration-300 hover:scale-105"
+                            className="object-cover object-center transition duration-300 hover:scale-105"
                         />
                     </div>
                 )}

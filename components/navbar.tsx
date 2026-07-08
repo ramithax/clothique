@@ -6,16 +6,24 @@ export const Navbar = () => {
             <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
                 {/* Logo */}
-                <Link href="/" className="text-2xl font-bold tracking-wide text-gray-800 hover:text-red-500 transition">
+                <Link href="/" className="text-2xl font-bold tracking-wide text-gray-800 transition-transform duration-300 hover:scale-110">
                     Clothique
                 </Link>
 
                 {/* Nav Links */}
                 <div className="hidden md:flex items-center space-x-8 text-gray-700 font-medium">
-                    <Link href="/" className="hover:text-red-500 transition">Home</Link>
-                    <Link href="/products" className="hover:text-red-500 transition">Products</Link>
-                    <Link href="/checkout" className="hover:text-red-500 transition">Checkout</Link>
-                    <Link href="/about">About</Link>
+                    <Link href="/" className="transition-transform duration-300 hover:scale-110">
+                        Home
+                    </Link>
+                    <Link href="/products" className="transition-transform duration-300 hover:scale-110">
+                        Products
+                    </Link>
+                    <Link href="/checkout" className="transition-transform duration-300 hover:scale-110">
+                        Checkout
+                    </Link>
+                    <Link href="/about" className="transition-transform duration-300 hover:scale-110">
+                        About
+                    </Link>
                 </div>
 
                 <div className="flex items-center space-x-4">

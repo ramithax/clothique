@@ -44,14 +44,14 @@ export default async function Home() {
 
 
             {/* Right Image */}
-            <div className="flex h-full items-center justify-center overflow-visible">
+            <div className="flex h-full items-center justify-center overflow-hidden mb-8">
 
               <Image
                 src={products.data[7].images[0]}
                 alt="Hoodie"
                 width={900}
                 height={900}
-                className="h-auto w-[325px] object-contain scale-110"
+                className="h-auto w-[390px] object-contain scale-110"
               />
 
             </div>
@@ -65,7 +65,7 @@ export default async function Home() {
 
       {/* Carousel Section */}
       <section className="mx-auto max-w-6xl px-6 pb-10">
-        <Carousel products={products.data} />
+        <Carousel />
       </section>
 
     </main>
