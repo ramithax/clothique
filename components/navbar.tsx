@@ -41,7 +41,7 @@ export const Navbar = () => {
 
 
                 {/* Logo */}
-                <Link href="/" className="text-3xl font-black tracking-[0.15em] text-black transition-transform duration-300 hover:scale-105">
+                <Link href="/" className="text-3xl font-normal font-[Playfair_Display] tracking-[0.2em] text-black transition-transform duration-300 hover:scale-105">
                     CLOTHIQUE
                 </Link>
 
