@@ -29,7 +29,6 @@ export const Navbar = () => {
     const links = [
         { name: "Home", href: "/" },
         { name: "Products", href: "/products" },
-        { name: "Checkout", href: "/checkout" },
         { name: "About", href: "/about" },
     ]
 
@@ -37,20 +36,27 @@ export const Navbar = () => {
     return (
         <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-200">
 
-            <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
+            <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between relative">
 
 
                 {/* Logo */}
-                <Link href="/" className="text-3xl font-normal font-[Playfair_Display] tracking-[0.2em] text-black transition-transform duration-300 hover:scale-105">
+                <Link
+                    href="/"
+                    className="text-3xl font-normal font-[Playfair_Display] tracking-[0.2em] text-black transition-transform duration-300 hover:scale-105"
+                >
                     CLOTHIQUE
                 </Link>
 
 
-                {/* Desktop Navigation */}
-                <div className="hidden md:flex items-center gap-10">
+                {/* Desktop Navigation - Centered */}
+                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10">
 
                     {links.map((link) => (
-                        <Link key={link.name} href={link.href} className="relative text-gray-700 font-medium tracking-wide transition-colors duration-300 hover:text-black group">
+                        <Link
+                            key={link.name}
+                            href={link.href}
+                            className="relative text-gray-700 font-medium tracking-wide transition-colors duration-300 hover:text-black group"
+                        >
 
                             {link.name}
 
@@ -70,7 +76,9 @@ export const Navbar = () => {
                     {/* Cart */}
                     <Link href="/checkout" className="relative group">
 
-                        <ShoppingCartIcon className="h-7 w-7 text-gray-800 transition-transform duration-300 group-hover:scale-110" />
+                        <ShoppingCartIcon
+                            className="h-7 w-7 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                        />
 
                         {cartCount > 0 && (
                             <span className="absolute -top-3 -right-3 flex items-center justify-center h-5 w-5 rounded-full bg-black text-white text-xs font-bold">
@@ -83,7 +91,11 @@ export const Navbar = () => {
 
 
                     {/* Mobile Menu Button */}
-                    <Button variant="ghost" className="md:hidden hover:bg-gray-100" onClick={() => setIsMobileOpen((prev) => !prev)}>
+                    <Button
+                        variant="ghost"
+                        className="md:hidden hover:bg-gray-100"
+                        onClick={() => setIsMobileOpen((prev) => !prev)}
+                    >
 
                         {isMobileOpen
                             ? <XMarkIcon className="h-7 w-7" />
@@ -100,16 +112,24 @@ export const Navbar = () => {
 
 
             {/* Mobile Menu */}
-            <div className={`md:hidden overflow-hidden transition-all duration-300 ${isMobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
+            <div
+                className={`md:hidden overflow-hidden transition-all duration-300 ${isMobileOpen
+                        ? "max-h-96 opacity-100"
+                        : "max-h-0 opacity-0"
+                    }`}
+            >
 
                 <div className="px-6 pb-6 flex flex-col gap-5 text-gray-700 font-medium">
 
                     {links.map((link) => (
 
-                        <Link key={link.name} href={link.href} onClick={() => setIsMobileOpen(false)} className="py-2 border-b border-gray-100 hover:text-black transition">
-
+                        <Link
+                            key={link.name}
+                            href={link.href}
+                            onClick={() => setIsMobileOpen(false)}
+                            className="py-2 border-b border-gray-100 hover:text-black transition"
+                        >
                             {link.name}
-
                         </Link>
 
                     ))}

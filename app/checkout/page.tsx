@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCartStore } from "@/store/cart-store";
 import { FiTrash2 } from "react-icons/fi";
+import { checkOutAction } from "./checkout-action";
 
 export default function CheckoutPage() {
     const { items, removeItem, addItem, clearCart } = useCartStore();
@@ -131,7 +132,8 @@ export default function CheckoutPage() {
             </Card>
 
             {/* Checkout Button */}
-            <form className="max-w-md mx-auto w-full flex justify-center">
+            <form action={checkOutAction} className="max-w-md mx-auto w-full flex justify-center">
+                <input type="hidden" name="items" value={JSON.stringify(items)} />
                 <Button
                     type="submit"
                     className="px-8 py-3 text-base font-medium rounded-lg bg-black text-white transition-all duration-300 hover:bg-gray-900 hover:scale-[1.03] active:scale-[0.97] shadow-md hover:shadow-lg"

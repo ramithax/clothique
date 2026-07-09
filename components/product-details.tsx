@@ -4,6 +4,7 @@ import Stripe from "stripe"
 import Image from "next/image"
 import { Button } from "./ui/button"
 import { useCartStore } from "@/store/cart-store"
+import Link from "next/link"
 
 interface Props {
     product: Stripe.Product
@@ -15,7 +16,7 @@ export const ProductDetail = ({ product }: Props) => {
     const price = product.default_price as Stripe.Price
 
     const cartItem = items.find((item) => item.id === product.id)
-    const quality = cartItem ? cartItem.quantity : 0
+    const quantity = cartItem ? cartItem.quantity : 0
 
     const onAddItem = () => {
         addItem({
@@ -28,69 +29,101 @@ export const ProductDetail = ({ product }: Props) => {
     }
 
     return (
-        <div className="container mx-auto px-4 py-10">
+        <div className="container mx-auto px-4 py-12">
 
-            <div className="flex flex-col md:flex-row gap-10 items-center">
+            <div className="flex flex-col md:flex-row gap-12 items-center">
 
-                {/* Image */}
+                {/* Product Image */}
                 {product.images?.[0] && (
-                    <div className="relative h-96 w-full md:w-1/2 rounded-2xl overflow-hidden shadow-lg">
+                    <div className="relative h-[550px] w-full md:w-[55%] rounded-2xl overflow-hidden bg-gray-100 shadow-md flex items-center justify-center">
+
                         <Image
                             src={product.images[0]}
                             alt={product.name}
                             fill
-                            className="object-cover object-center transition duration-300 hover:scale-105"
+                            className="object-contain p-8 transition duration-300 hover:scale-105"
                         />
+
                     </div>
                 )}
 
-                {/* Details */}
-                <div className="md:w-1/2 space-y-5">
+
+                {/* Product Details */}
+                <div className="md:w-1/2 space-y-6">
 
                     <h1 className="text-4xl font-bold text-gray-900">
                         {product.name}
                     </h1>
 
+
                     {product.description && (
-                        <p className="text-gray-600 leading-relaxed">
+                        <p className="text-gray-600 leading-relaxed text-lg">
                             {product.description}
                         </p>
                     )}
 
+
                     {/* Price */}
                     {price?.unit_amount && (
-                        <p className="text-2xl font-semibold text-black">
+                        <p className="text-3xl font-bold text-black">
                             ${(price.unit_amount / 100).toFixed(2)}
                         </p>
                     )}
 
-                    {/* Quantity */}
-                    <div className="flex items-center gap-4 mt-4">
 
-                        <Button variant="outline" className="px-4 py-2 text-lg"
-                            onClick={() => { removeItem(product.id) }}>
+                    {/* Quantity */}
+                    <div className="flex items-center gap-5 pt-4">
+
+                        <Button
+                            variant="outline"
+                            className="h-10 w-10 text-xl rounded-lg"
+                            onClick={() => removeItem(product.id)}
+                        >
                             -
                         </Button>
 
-                        <span className="text-lg font-medium">{quality}</span>
 
-                        <Button variant="outline" className="px-4 py-2 text-lg"
-                            onClick={onAddItem}>
+                        <span className="text-xl font-semibold">
+                            {quantity}
+                        </span>
+
+
+                        <Button
+                            variant="outline"
+                            className="h-10 w-10 text-xl rounded-lg"
+                            onClick={onAddItem}
+                        >
                             +
                         </Button>
 
                     </div>
 
-                    {/* Add to cart */}
-                    <div className="mt-6">
-                        <Button className="w-full md:w-auto px-8 py-3 text-lg">
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 pt-6">
+
+                        <Button
+                            variant="outline"
+                            onClick={onAddItem}
+                            className="w-full sm:w-auto px-8 py-3 text-base rounded-lg"
+                        >
                             Add to Cart
                         </Button>
+
+
+                        <Link href="/checkout">
+                            <Button
+                                className="w-full sm:w-auto px-8 py-3 text-base rounded-lg bg-black text-white hover:bg-gray-900"
+                            >
+                                Buy Now
+                            </Button>
+                        </Link>
                     </div>
 
                 </div>
 
             </div>
+
         </div>
     )
 }
