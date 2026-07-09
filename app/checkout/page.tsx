@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCartStore } from "@/store/cart-store";
+import { FiTrash2 } from "react-icons/fi";
 
 export default function CheckoutPage() {
     const { items, removeItem, addItem, clearCart } = useCartStore();
@@ -12,30 +13,62 @@ export default function CheckoutPage() {
         0
     );
 
+    const handleClearCart = () => {
+        if (confirm("Are you sure you want to clear the cart?")) {
+            clearCart();
+        }
+    };
+
     if (items.length === 0) {
-        return (
-            <div className="min-h-screen flex items-center justify-center px-6">
-                <h1 className="text-2xl font-semibold text-gray-500">
-                    Your Cart is Empty 🛒
-                </h1>
-            </div>
+        return (<div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 text-center">
+
+            <div className="text-6xl mb-4">🛒</div>
+
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                Your Cart is Empty
+            </h1>
+
+            <p className="text-gray-500 mb-6 max-w-sm">
+                Looks like you haven’t added anything yet. Start exploring and find something you love.
+            </p>
+
+            <Button
+                onClick={() => window.location.href = "/products"}
+                className="px-8 py-3 text-base font-medium rounded-lg bg-black text-white transition-all duration-300 hover:bg-gray-900 hover:scale-[1.03] active:scale-[0.97] shadow-md hover:shadow-lg"
+
+            >
+                Continue Shopping
+            </Button>
+        </div>
         );
     }
+
 
     return (
         <div className="min-h-screen flex flex-col items-center py-10 px-6 bg-gray-50">
 
             {/* Title */}
-            <h1 className="text-3xl font-bold mb-8 text-center">
+            <h1 className="text-3xl font-semibold mb-8 text-center">
                 Checkout
             </h1>
 
             {/* Card */}
             <Card className="w-full max-w-md mb-8 shadow-md rounded-xl">
-                <CardHeader>
+
+                {/* Header with Clear Button */}
+                <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-xl font-semibold">
                         Order Summary
                     </CardTitle>
+
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                        onClick={handleClearCart}
+                    >
+                        <FiTrash2 size={18} />
+                    </Button>
                 </CardHeader>
 
                 <CardContent className="space-y-5">
@@ -97,22 +130,17 @@ export default function CheckoutPage() {
                 </CardContent>
             </Card>
 
-            {/* Button */}
-            <form className="max-w-md mx-auto w-full">
+            {/* Checkout Button */}
+            <form className="max-w-md mx-auto w-full flex justify-center">
                 <Button
                     type="submit"
-                    className=" w-full py-3 text-lg font-semibold rounded-xl bg-black text-white transition-all duration-300 hover:bg-gray-900 hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg " >
+                    className="px-8 py-3 text-base font-medium rounded-lg bg-black text-white transition-all duration-300 hover:bg-gray-900 hover:scale-[1.03] active:scale-[0.97] shadow-md hover:shadow-lg"
+                >
                     Proceed to Payment
-                </Button>
-
-                <Button
-                    onClick={() => clearCart()}
-                    className=" w-full py-3 text-lg font-semibold rounded-xl bg-black text-white transition-all duration-300 hover:bg-gray-900 hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg " >
-                    Clear Cart
                 </Button>
             </form>
 
+
         </div>
     );
-
 }
