@@ -6,3 +6,8 @@ The store enables users to browse and purchase a variety of fashion items with e
 
 With a strong foundation in place, the platform is designed to be scalable, with future plans to expand features, enhance user experience, and introduce more advanced capabilities in the evolving e-commerce space.
 
+## Screenshots
+
+![Home Page](./public/home1.png)
+![Checkout](./public/home2.png)
+![Products](./public/products.png)
