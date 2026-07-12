@@ -5,11 +5,18 @@ import { ShoppingCartIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outl
 import { useCartStore } from "@/store/cart-store"
 import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
+import { auth } from "@/lib/auth"
+import { signOut } from "@/lib/actions/auth-actions"
+import { useRouter } from "next/navigation"
 
-export const Navbar = () => {
+type Session = typeof auth.$Infer.Session
+
+export const Navbar = ({ session }: { session: Session | null }) => {
 
     const [isMobileOpen, setIsMobileOpen] = useState(false)
     const { items } = useCartStore()
+
+    const router = useRouter()
 
     const cartCount = items.reduce((acc, item) => acc + item.quantity, 0)
 
@@ -70,43 +77,67 @@ export const Navbar = () => {
 
 
                 {/* Right Section */}
-                <div className="flex items-center gap-5">
-
+                <div className="flex items-center gap-3 md:gap-4">
 
                     {/* Cart */}
-                    <Link href="/checkout" className="relative group">
+                    <Link href="/checkout" className="relative flex items-center group ml-1">
 
-                        <ShoppingCartIcon
-                            className="h-7 w-7 text-gray-800 transition-transform duration-300 group-hover:scale-110"
-                        />
+                        <ShoppingCartIcon className="h-6 w-6 md:h-7 md:w-7 text-gray-800 transition-transform duration-300 group-hover:scale-110" />
 
                         {cartCount > 0 && (
-                            <span className="absolute -top-3 -right-3 flex items-center justify-center h-5 w-5 rounded-full bg-black text-white text-xs font-bold">
+                            <span className="absolute -top-2 -right-2 flex items-center justify-center h-5 w-5 rounded-full bg-black text-white text-[10px] font-bold">
                                 {cartCount}
                             </span>
                         )}
 
                     </Link>
 
+                    {/* Auth Buttons */}
+                    {!session && (
+                        <div className="hidden md:flex items-center gap-2">
+                            <Button
+                                variant="ghost"
+                                onClick={() => router.push("/sign-in")}
+                            >
+                                Sign In
+                            </Button>
+
+                            <Button
+                                variant="ghost"
+                                onClick={() => router.push("/sign-up")}
+                            >
+                                Sign Up
+                            </Button>
+                        </div>
+                    )}
+
+                    {session && (
+                        <Button
+                            variant="ghost"
+                            onClick={async () => {
+                                await signOut()
+                                router.refresh()
+                            }}
+                        >
+                            Logout
+                        </Button>
+                    )}
 
 
                     {/* Mobile Menu Button */}
                     <Button
-                        variant="ghost"
-                        className="md:hidden hover:bg-gray-100"
+                        variant="outline"
+                        size="icon"
+                        className="md:hidden"
                         onClick={() => setIsMobileOpen((prev) => !prev)}
                     >
-
                         {isMobileOpen
-                            ? <XMarkIcon className="h-7 w-7" />
-                            : <Bars3Icon className="h-7 w-7" />
+                            ? <XMarkIcon className="h-5 w-5" />
+                            : <Bars3Icon className="h-5 w-5" />
                         }
-
                     </Button>
 
-
                 </div>
-
             </div>
 
 
@@ -114,8 +145,8 @@ export const Navbar = () => {
             {/* Mobile Menu */}
             <div
                 className={`md:hidden overflow-hidden transition-all duration-300 ${isMobileOpen
-                        ? "max-h-96 opacity-100"
-                        : "max-h-0 opacity-0"
+                    ? "max-h-96 opacity-100"
+                    : "max-h-0 opacity-0"
                     }`}
             >
 
