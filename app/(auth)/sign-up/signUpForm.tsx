@@ -1,10 +1,11 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { signUp } from "@/lib/actions/auth-actions";
+import { signUp, socialSignUp } from "@/lib/actions/auth-actions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const SignUpForm = () => {
 
@@ -12,7 +13,6 @@ export const SignUpForm = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
-    const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
     const router = useRouter()
@@ -21,9 +21,11 @@ export const SignUpForm = () => {
         e.preventDefault()
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match")
+            toast.error("Passwords do not match")
             return
         }
+
+        const toastId = toast.loading("Creating account...")
 
         try {
             setIsLoading(true)
@@ -31,16 +33,32 @@ export const SignUpForm = () => {
             const response = await signUp(username, email, password)
 
             if (!response.user) {
-                setError("Failed to sign up")
+
+                toast.error("Failed to create account", {
+                    id: toastId,
+                })
+
             } else {
+
+                toast.success("Account created successfully", {
+                    id: toastId,
+                })
+
                 router.push("/")
             }
-        }
-        catch (error) {
+
+        } catch (error) {
+
             console.log(error)
-            setError("Failed to sign up")
+
+            toast.error("Something went wrong. Please try again.", {
+                id: toastId,
+            })
+
         } finally {
+
             setIsLoading(false)
+
         }
     }
 
@@ -114,7 +132,10 @@ export const SignUpForm = () => {
                 </form>
 
                 {/* Google Button */}
-                <Button className="w-full flex items-center justify-center gap-2 bg-black text-white hover:bg-gray-900 border border-black">
+                <Button
+                    type="button"
+                    className="w-full flex items-center justify-center gap-2 bg-black text-white hover:bg-gray-900 border border-black"
+                    onClick={() => socialSignUp("google")}>
                     <img
                         src="https://www.svgrepo.com/show/475656/google-color.svg"
                         alt="google"

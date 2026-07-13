@@ -9,7 +9,9 @@ export default async function ProductsPage() {
 
     return (
         <div>
-            <ProductList products={products.data} />
+            <ProductList
+                products={products.data}
+            />
         </div>
-    )
+    );
 }

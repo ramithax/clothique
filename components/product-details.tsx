@@ -4,15 +4,22 @@ import Stripe from "stripe"
 import Image from "next/image"
 import { Button } from "./ui/button"
 import { useCartStore } from "@/store/cart-store"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
+import type { Session } from "@/lib/types"
+import { toast } from "sonner"
+
 
 interface Props {
     product: Stripe.Product
+    session: Session | null
 }
 
-export const ProductDetail = ({ product }: Props) => {
+export const ProductDetail = ({ product, session }: Props) => {
 
     const { items, addItem, removeItem } = useCartStore()
+
+    const router = useRouter()
+
     const price = product.default_price as Stripe.Price
 
     const cartItem = items.find((item) => item.id === product.id)
@@ -26,10 +33,12 @@ export const ProductDetail = ({ product }: Props) => {
             imageUrl: product.images?.[0] || null,
             quantity: 1,
         })
+
+        toast.success("Item added to cart")
     }
 
     return (
-        <div className="container mx-auto px-4 py-12">
+        <div className="py-12 max-w-6xl mx-auto">
 
             <div className="flex flex-col md:flex-row gap-12 items-center">
 
@@ -110,14 +119,18 @@ export const ProductDetail = ({ product }: Props) => {
                             Add to Cart
                         </Button>
 
-
-                        <Link href="/checkout">
-                            <Button
-                                className="w-full sm:w-auto px-8 py-3 text-base rounded-lg bg-black text-white hover:bg-gray-900"
-                            >
-                                Buy Now
-                            </Button>
-                        </Link>
+                        <Button
+                            className="w-full sm:w-auto px-8 py-3 text-base rounded-lg bg-black text-white hover:bg-gray-900"
+                            onClick={() => {
+                                if (session) {
+                                    router.push("/checkout")
+                                } else {
+                                    router.push("/sign-in")
+                                }
+                            }}
+                        >
+                            Buy Now
+                        </Button>
                     </div>
 
                 </div>

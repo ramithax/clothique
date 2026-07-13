@@ -13,9 +13,15 @@ export const auth = betterAuth({
     },
     socialProviders: {
         google: {
-            clientId: "",
-            clientSecret: ""
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_SECRET_KEY!
         }
     },
+
+    trustedOrigins: [
+        "http://localhost:3000",
+        "https://clothique-steel.vercel.app"
+    ],
+
     plugins: [nextCookies()]
 });

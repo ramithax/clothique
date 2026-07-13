@@ -1,5 +1,7 @@
 import { ProductDetail } from "@/components/product-details"
+import { auth } from "@/lib/auth";
 import { stripe } from "@/lib/stripe"
+import { headers } from "next/headers";
 
 export default async function ProductDetailsPage({
     params,
@@ -14,5 +16,9 @@ export default async function ProductDetailsPage({
 
     const plainProduct = JSON.parse(JSON.stringify(product))
 
-    return <ProductDetail product={plainProduct} />
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    return <ProductDetail product={plainProduct} session={session} />
 }

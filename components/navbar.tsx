@@ -14,6 +14,7 @@ type Session = typeof auth.$Infer.Session
 export const Navbar = ({ session }: { session: Session | null }) => {
 
     const [isMobileOpen, setIsMobileOpen] = useState(false)
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const { items } = useCartStore()
 
     const router = useRouter()
@@ -36,7 +37,14 @@ export const Navbar = ({ session }: { session: Session | null }) => {
     const links = [
         { name: "Home", href: "/" },
         { name: "Products", href: "/products" },
+        { name: "About", href: "/about" }
+    ]
+
+    const mobileLinks = [
+        { name: "Home", href: "/" },
+        { name: "Products", href: "/products" },
         { name: "About", href: "/about" },
+        { name: "Settings", href: "/settings" }
     ]
 
 
@@ -77,7 +85,7 @@ export const Navbar = ({ session }: { session: Session | null }) => {
 
 
                 {/* Right Section */}
-                <div className="flex items-center gap-3 md:gap-4">
+                <div className="flex items-center gap-5 md:gap-6">
 
                     {/* Cart */}
                     <Link href="/checkout" className="relative flex items-center group ml-1">
@@ -111,17 +119,59 @@ export const Navbar = ({ session }: { session: Session | null }) => {
                         </div>
                     )}
 
-                    {session && (
-                        <Button
-                            variant="ghost"
-                            onClick={async () => {
-                                await signOut()
-                                router.refresh()
-                            }}
-                        >
-                            Logout
-                        </Button>
-                    )}
+                    <div className="hidden md:block">
+                        {session && (
+                            <div className="relative">
+                                <button
+                                    onClick={() => {
+                                        setIsDropdownOpen(prev => !prev)
+                                    }}
+                                    className="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold uppercase"
+                                >
+                                    {session.user.name?.charAt(0) || "U"}
+                                </button>
+
+                                {/* Dropdown */}
+                                {isDropdownOpen && (
+                                    <div className="absolute right-0 mt-3 w-44 bg-white border border-gray-200 rounded-xl shadow-xl overflow-visible z-50">
+
+                                        {/* Floating Close Button */}
+                                        <button
+                                            onClick={() => setIsDropdownOpen(false)}
+                                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-black text-white flex items-center justify-center shadow-md hover:scale-110 transition"
+                                        >
+                                            ✕
+                                        </button>
+
+                                        <div className="py-2">
+
+                                            <button
+                                                onClick={() => {
+                                                    router.push("/settings")
+                                                    setIsDropdownOpen(false)
+                                                }}
+                                                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition"
+                                            >
+                                                Settings
+                                            </button>
+
+                                            <button
+                                                onClick={async () => {
+                                                    await signOut()
+                                                    router.refresh()
+                                                }}
+                                                className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 transition"
+                                            >
+                                                Logout
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
 
 
                     {/* Mobile Menu Button */}
@@ -152,7 +202,7 @@ export const Navbar = ({ session }: { session: Session | null }) => {
 
                 <div className="px-6 pb-6 flex flex-col gap-5 text-gray-700 font-medium">
 
-                    {links.map((link) => (
+                    {mobileLinks.map((link) => (
 
                         <Link
                             key={link.name}
