@@ -5,11 +5,19 @@ import { ShoppingCartIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outl
 import { useCartStore } from "@/store/cart-store"
 import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
+import { auth } from "@/lib/auth"
+import { signOut } from "@/lib/actions/auth-actions"
+import { useRouter } from "next/navigation"
 
-export const Navbar = () => {
+type Session = typeof auth.$Infer.Session
+
+export const Navbar = ({ session }: { session: Session | null }) => {
 
     const [isMobileOpen, setIsMobileOpen] = useState(false)
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const { items } = useCartStore()
+
+    const router = useRouter()
 
     const cartCount = items.reduce((acc, item) => acc + item.quantity, 0)
 
@@ -29,7 +37,14 @@ export const Navbar = () => {
     const links = [
         { name: "Home", href: "/" },
         { name: "Products", href: "/products" },
+        { name: "About", href: "/about" }
+    ]
+
+    const mobileLinks = [
+        { name: "Home", href: "/" },
+        { name: "Products", href: "/products" },
         { name: "About", href: "/about" },
+        { name: "Settings", href: "/settings" }
     ]
 
 
@@ -70,43 +85,109 @@ export const Navbar = () => {
 
 
                 {/* Right Section */}
-                <div className="flex items-center gap-5">
-
+                <div className="flex items-center gap-5 md:gap-6">
 
                     {/* Cart */}
-                    <Link href="/checkout" className="relative group">
+                    <Link href="/checkout" className="relative flex items-center group ml-1">
 
-                        <ShoppingCartIcon
-                            className="h-7 w-7 text-gray-800 transition-transform duration-300 group-hover:scale-110"
-                        />
+                        <ShoppingCartIcon className="h-6 w-6 md:h-7 md:w-7 text-gray-800 transition-transform duration-300 group-hover:scale-110" />
 
                         {cartCount > 0 && (
-                            <span className="absolute -top-3 -right-3 flex items-center justify-center h-5 w-5 rounded-full bg-black text-white text-xs font-bold">
+                            <span className="absolute -top-2 -right-2 flex items-center justify-center h-5 w-5 rounded-full bg-black text-white text-[10px] font-bold">
                                 {cartCount}
                             </span>
                         )}
 
                     </Link>
 
+                    {/* Auth Buttons */}
+                    {!session && (
+                        <div className="hidden md:flex items-center gap-2">
+                            <Button
+                                variant="ghost"
+                                onClick={() => router.push("/sign-in")}
+                            >
+                                Sign In
+                            </Button>
+
+                            <Button
+                                variant="ghost"
+                                onClick={() => router.push("/sign-up")}
+                            >
+                                Sign Up
+                            </Button>
+                        </div>
+                    )}
+
+                    <div className="hidden md:block">
+                        {session && (
+                            <div className="relative">
+                                <button
+                                    onClick={() => {
+                                        setIsDropdownOpen(prev => !prev)
+                                    }}
+                                    className="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold uppercase"
+                                >
+                                    {session.user.name?.charAt(0) || "U"}
+                                </button>
+
+                                {/* Dropdown */}
+                                {isDropdownOpen && (
+                                    <div className="absolute right-0 mt-3 w-44 bg-white border border-gray-200 rounded-xl shadow-xl overflow-visible z-50">
+
+                                        {/* Floating Close Button */}
+                                        <button
+                                            onClick={() => setIsDropdownOpen(false)}
+                                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-black text-white flex items-center justify-center shadow-md hover:scale-110 transition"
+                                        >
+                                            ✕
+                                        </button>
+
+                                        <div className="py-2">
+
+                                            <button
+                                                onClick={() => {
+                                                    router.push("/settings")
+                                                    setIsDropdownOpen(false)
+                                                }}
+                                                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition"
+                                            >
+                                                Settings
+                                            </button>
+
+                                            <button
+                                                onClick={async () => {
+                                                    await signOut()
+                                                    router.refresh()
+                                                }}
+                                                className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 transition"
+                                            >
+                                                Logout
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
 
 
                     {/* Mobile Menu Button */}
                     <Button
-                        variant="ghost"
-                        className="md:hidden hover:bg-gray-100"
+                        variant="outline"
+                        size="icon"
+                        className="md:hidden"
                         onClick={() => setIsMobileOpen((prev) => !prev)}
                     >
-
                         {isMobileOpen
-                            ? <XMarkIcon className="h-7 w-7" />
-                            : <Bars3Icon className="h-7 w-7" />
+                            ? <XMarkIcon className="h-5 w-5" />
+                            : <Bars3Icon className="h-5 w-5" />
                         }
-
                     </Button>
 
-
                 </div>
-
             </div>
 
 
@@ -114,14 +195,14 @@ export const Navbar = () => {
             {/* Mobile Menu */}
             <div
                 className={`md:hidden overflow-hidden transition-all duration-300 ${isMobileOpen
-                        ? "max-h-96 opacity-100"
-                        : "max-h-0 opacity-0"
+                    ? "max-h-96 opacity-100"
+                    : "max-h-0 opacity-0"
                     }`}
             >
 
                 <div className="px-6 pb-6 flex flex-col gap-5 text-gray-700 font-medium">
 
-                    {links.map((link) => (
+                    {mobileLinks.map((link) => (
 
                         <Link
                             key={link.name}

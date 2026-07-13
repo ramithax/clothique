@@ -1,10 +1,20 @@
 "use server"
 
+import { auth } from "@/lib/auth"
 import { stripe } from "@/lib/stripe"
 import { CartItem } from "@/store/cart-store"
+import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 export const checkOutAction = async (formData: FormData): Promise<void> => {
+
+    const userSession = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    if (!userSession) {
+        redirect("/sign-in")
+    }
 
     const itemsJson = formData.get("items") as string
     const items = JSON.parse(itemsJson)
