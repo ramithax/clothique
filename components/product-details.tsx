@@ -5,7 +5,7 @@ import Image from "next/image"
 import { Button } from "./ui/button"
 import { useCartStore } from "@/store/cart-store"
 import { useRouter } from "next/navigation"
-import type { Session } from "@/lib/types"
+import type { Session } from "@/lib/types/types"
 import { toast } from "sonner"
 
 
