@@ -13,8 +13,6 @@ export default async function AdminLayout({
         headers: await headers()
     })
 
-    console.log("Session:", session?.user);
-
     if (session?.user.role != "ADMIN") {
         redirect("/");
     }
@@ -25,7 +23,7 @@ export default async function AdminLayout({
             {/* Top Header */}
             <header className="w-full px-6 py-4 bg-white border-b border-gray-200">
                 <Link href="/">
-                    <p className="text-2xl font-normal font-[Playfair_Display] tracking-[0.2em] text-black">
+                    <p className="text-2xl font-normal font-[Playfair_Display] tracking-[0.2em] text-black text-center">
                         CLOTHIQUE
                     </p>
                 </Link>
@@ -35,17 +33,34 @@ export default async function AdminLayout({
             <div className="flex flex-1">
 
                 {/* Sidebar */}
-                <aside className="w-64 border-r p-6 space-y-6">
-                    <nav className="flex flex-col gap-4 text-sm">
-                        <Link href="/admin" className="hover:underline">
-                            Dashboard
-                        </Link>
-                        <Link href="/admin/products" className="hover:underline">
+                <aside className="w-64 min-h-screen bg-white border-r shadow-sm p-6">
+                    <h2 className="text-xl font-semibold mb-8">
+                        Admin Panel
+                    </h2>
+
+                    <nav className="flex flex-col gap-2 text-sm">
+
+                        <Link
+                            href="/admin"
+                            className="px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-black transition"
+                        >
                             Products
                         </Link>
-                        <Link href="/admin/orders" className="hover:underline">
+
+                        <Link
+                            href="/admin/orders"
+                            className="px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-black transition"
+                        >
                             Orders
                         </Link>
+
+                        <Link
+                            href="/admin/users"
+                            className="px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-black transition"
+                        >
+                            Users
+                        </Link>
+
                     </nav>
                 </aside>
 
