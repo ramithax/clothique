@@ -34,7 +34,9 @@ export const ProductDetail = ({ product, session }: Props) => {
             quantity: 1
         });
 
-        toast.success("Item added to cart");
+        toast.success("Item added to cart", {
+            duration: 2000
+        });
     };
 
 
