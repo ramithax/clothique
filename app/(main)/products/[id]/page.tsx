@@ -1,24 +1,34 @@
-import { ProductDetail } from "@/components/product-details"
+import { ProductDetail } from "@/components/product-details";
+import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { stripe } from "@/lib/stripe"
 import { headers } from "next/headers";
+import { notFound } from "next/navigation";
+
 
 export default async function ProductDetailsPage({
     params,
 }: {
     params: Promise<{ id: string }>
 }) {
-    const resolvedParams = await params;
 
-    const product = await stripe.products.retrieve(resolvedParams.id, {
-        expand: ["default_price"],
-    })
+    const { id } = await params;
 
-    const plainProduct = JSON.parse(JSON.stringify(product))
+    const product = await prisma.product.findUnique({
+        where: { id }
+    });
+
+    if (!product) notFound();
+
 
     const session = await auth.api.getSession({
         headers: await headers()
-    })
+    });
 
-    return <ProductDetail product={plainProduct} session={session} />
+
+    return (
+        <ProductDetail
+            product={product}
+            session={session}
+        />
+    );
 }

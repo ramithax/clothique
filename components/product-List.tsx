@@ -1,40 +1,43 @@
-"use client"
+"use client";
 
-import Stripe from "stripe"
-import { ProductCard } from "./product-card"
-import { useState } from "react"
+import { useState } from "react";
+import { ProductCard } from "./product-card";
+import { Product } from "@/lib/types/product";
+
 
 interface Props {
-    products: Stripe.Product[]
+    products: Product[];
 }
+
 
 export const ProductList = ({ products }: Props) => {
 
-    const [search, setSearch] = useState<string>("")
+    const [search, setSearch] = useState("");
 
-    const filteredProduct = products.filter((product) => {
 
-        const term = search.toLowerCase()
+    const filteredProducts = products.filter((product) => {
 
-        const nameMatch = product.name
-            .toLowerCase()
-            .includes(term)
+        const term = search.toLowerCase().trim();
 
-        const descMatch = product.description
-            ? product.description.toLowerCase().includes(term)
-            : false
+        if (!term) return true;
 
-        return nameMatch || descMatch
-    })
+
+        return (
+            product.name.toLowerCase().includes(term) ||
+            product.description.toLowerCase().includes(term) ||
+            product.category.toLowerCase().includes(term) ||
+            product.brand.toLowerCase().includes(term)
+        );
+
+    });
 
 
     return (
         <div className="mx-auto max-w-7xl px-6 py-10">
 
-            {/* Header + Search */}
             <div className="mb-10 flex flex-col items-center justify-between gap-4 sm:flex-row">
 
-                <h2 className="text-2xl font-bold tracking-tight">
+                <h2 className="text-2xl font-bold">
                     All Products
                 </h2>
 
@@ -44,32 +47,38 @@ export const ProductList = ({ products }: Props) => {
                     placeholder="Search products..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full max-w-xs rounded-full border border-neutral-300 bg-white px-5 py-2 text-sm shadow-sm outline-none transition focus:border-black focus:ring-2 focus:ring-black/20"
+                    className="w-full max-w-xs rounded-full border border-neutral-300 bg-white px-5 py-2 text-sm outline-none focus:border-black"
                 />
 
             </div>
 
 
-            {/* Products Grid */}
-            <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {
+                filteredProducts.length === 0 ? (
 
-                {filteredProduct.map((product) => (
+                    <div className="py-20 text-center text-gray-500">
+                        No products found
+                    </div>
 
-                    <li
-                        key={product.id}
-                        className="transition-transform duration-300 hover:-translate-y-1"
-                    >
+                ) : (
 
-                        <ProductCard
-                            product={product}
-                        />
+                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
-                    </li>
+                        {
+                            filteredProducts.map((product) => (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                />
+                            ))
+                        }
 
-                ))}
+                    </div>
 
-            </ul>
+                )
+            }
+
 
         </div>
-    )
-}
+    );
+};

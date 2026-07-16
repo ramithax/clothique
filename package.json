@@ -12,6 +12,8 @@
     "@heroicons/react": "^2.2.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@supabase/ssr": "^0.12.1",
+    "@supabase/supabase-js": "^2.110.6",
     "@tailwindcss/postcss": "^4.3.2",
     "better-auth": "^1.6.23",
     "class-variance-authority": "^0.7.1",

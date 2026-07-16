@@ -1,15 +1,9 @@
 import Carousel from "@/components/carousel";
 import { Button } from "@/components/ui/button";
-import { stripe } from "@/lib/stripe";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function Home() {
-
-  const products = await stripe.products.list({
-    expand: ["data.default_price"],
-    limit: 8,
-  });
+export default function Home() {
 
   return (
     <main className="min-h-screen">
@@ -50,7 +44,7 @@ export default async function Home() {
             <div className="flex items-center justify-center overflow-hidden">
 
               <Image
-                src={products.data[7].images[0]}
+                src="/t-shirt.png"
                 alt="Hoodie"
                 width={900}
                 height={900}
@@ -59,7 +53,7 @@ export default async function Home() {
                   sm:w-[320px]
                   md:w-[390px]
                   object-contain
-                  scale-110
+                  scale-130
                 "
               />
 

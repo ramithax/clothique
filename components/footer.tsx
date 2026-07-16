@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const Footer = () => {
     return (
         <footer className="bg-white border-t border-gray-200 mt-16">
@@ -26,10 +28,10 @@ export const Footer = () => {
                 <div>
                     <h3 className="font-semibold text-gray-800 mb-3">Company</h3>
                     <ul className="space-y-2 text-gray-500 text-sm">
-                        <li className="hover:text-black cursor-pointer">About Us</li>
-                        <li className="hover:text-black cursor-pointer">Careers</li>
-                        <li className="hover:text-black cursor-pointer">Contact</li>
-                        <li className="hover:text-black cursor-pointer">Blog</li>
+                        <Link href="/about"><li className="hover:text-black cursor-pointer">About Us</li></Link>
+                        <Link href="/careers"><li className="hover:text-black cursor-pointer">Careers</li></Link>
+                        <Link href="/contact"><li className="hover:text-black cursor-pointer">Contact</li></Link>
+                        <Link href="/blog"><li className="hover:text-black cursor-pointer">Blog</li></Link>
                     </ul>
                 </div>
 
