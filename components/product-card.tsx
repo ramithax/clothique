@@ -1,47 +1,81 @@
-import Link from "next/link"
-import Stripe from "stripe"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
-import Image from "next/image"
-import { Button } from "./ui/button"
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { Product } from "@/lib/types/product";
+
 
 interface Props {
-    product: Stripe.Product
+    product: Product;
 }
+
 
 export const ProductCard = ({ product }: Props) => {
 
-    const price = product.default_price as Stripe.Price
-
     return (
-        <Link href={`/products/${product.id}`} className="block h-full">
-            <Card className="group hover:shadow-2xl transition duration-300 py-0 h-full flex flex-col border-gray-300 gap-0">
-                {product.images && product.images[0] && (
-                    <div className="relative h-60 w-full">
-                        <Image
-                            src={product.images[0]}
-                            alt={product.name}
-                            fill
-                            className="object-cover object-center group-hover:opacity-90 transition-opacity duration-300 rounded-t-lg"
-                        />
-                    </div>
-                )}
-                <CardHeader className="p-4">
-                    <CardTitle className="text-xl font-bold text-gray-800">
-                        {product.name}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 flex-grow flex flex-col justify-between">
-                    {product.description && (
-                        <p className="text-gray-600 text-sm mb-2">{product.description}</p>
-                    )}
-                    {price && price.unit_amount && (
-                        <p className="text-lg font-semibold text-gray-900">
-                            ${(price.unit_amount / 100).toFixed(2)}
-                        </p>
-                    )}
-                    <Button className="mt-4 bg-black text-white">View Details</Button>
-                </CardContent>
-            </Card>
+
+        <Link href={`/products/${product.id}`}>
+
+            <div className="rounded-xl border p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+
+                <div className="relative h-60 w-full">
+
+                    <Image
+                        src={product.images?.[0] || "/placeholder.png"}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width:768px) 100vw, 25vw"
+                        className="object-contain"
+                    />
+
+                </div>
+
+
+                <h3 className="mt-4 font-semibold">
+                    {product.name}
+                </h3>
+
+
+                <p className="mt-1 line-clamp-2 text-sm text-gray-500">
+                    {product.description}
+                </p>
+
+
+                <div className="mt-3">
+
+                    <span className="mr-2 text-gray-400 line-through">
+                        LKR.{product.labeledPrice.toFixed(2)}
+                    </span>
+
+
+                    <span className="font-bold">
+                        LKR.{product.price.toFixed(2)}
+                    </span>
+
+                </div>
+
+
+                <div className="mt-2 flex justify-between text-sm">
+
+                    <span>
+                        Stock: {product.stock}
+                    </span>
+
+
+                    {
+                        !product.isAvailable && (
+                            <span className="text-red-500">
+                                Unavailable
+                            </span>
+                        )
+                    }
+
+                </div>
+
+
+            </div>
+
         </Link>
-    )
-}
+
+    );
+};

@@ -7,7 +7,7 @@ export async function createProduct(formData: FormData) {
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
         const price = Number(formData.get("price"));
-        const labeledPrice = formData.get("labeledPrice") as string;
+        const labeledPrice = Number(formData.get("labeledPrice"));
         const images = JSON.parse(formData.get("images") as string) as string[];
         const category = formData.get("category") as string;
         const stock = Number(formData.get("stock"));
@@ -45,11 +45,34 @@ export async function createProduct(formData: FormData) {
             message: "Product created successfully",
             product,
         };
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
         return {
             success: false,
-            message: "Failed to create product",
+            message: error.message || "Failed to create product",
         };
+    }
+}
+
+
+export async function getProducts(options?: {
+    includeUnavailable?: boolean
+}) {
+    const includeUnavailable = options?.includeUnavailable ?? false
+
+    try {
+        const products = await prisma.product.findMany({
+            where: includeUnavailable
+                ? {}
+                : { isAvailable: true },
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
+
+        return { success: true, data: products }
+
+    } catch (error) {
+        return { success: false, message: "Failed to fetch products" }
     }
 }

@@ -1,96 +1,95 @@
-"use client"
+"use client";
 
-import Stripe from "stripe"
-import Image from "next/image"
-import { Button } from "./ui/button"
-import { useCartStore } from "@/store/cart-store"
-import { useRouter } from "next/navigation"
-import type { Session } from "@/lib/types/types"
-import { toast } from "sonner"
+import Image from "next/image";
+import { Button } from "./ui/button";
+import { useCartStore } from "@/store/cart-store";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import type { Session } from "@/lib/types/types";
+import type { Product } from "@/lib/types/product";
 
 
 interface Props {
-    product: Stripe.Product
-    session: Session | null
+    product: Product;
+    session: Session | null;
 }
+
 
 export const ProductDetail = ({ product, session }: Props) => {
 
-    const { items, addItem, removeItem } = useCartStore()
+    const { items, addItem, removeItem } = useCartStore();
+    const router = useRouter();
 
-    const router = useRouter()
+    const cartItem = items.find(item => item.id === product.id);
+    const quantity = cartItem?.quantity ?? 0;
 
-    const price = product.default_price as Stripe.Price
 
-    const cartItem = items.find((item) => item.id === product.id)
-    const quantity = cartItem ? cartItem.quantity : 0
+    const addToCart = () => {
 
-    const onAddItem = () => {
         addItem({
             id: product.id,
             name: product.name,
-            price: price?.unit_amount || 0,
+            price: product.price,
             imageUrl: product.images?.[0] || null,
-            quantity: 1,
-        })
+            quantity: 1
+        });
 
-        toast.success("Item added to cart")
-    }
+        toast.success("Item added to cart");
+    };
+
 
     return (
-        <div className="py-12 max-w-6xl mx-auto">
+        <div className="mx-auto max-w-6xl py-12">
 
-            <div className="flex flex-col md:flex-row gap-12 items-center">
+            <div className="flex flex-col items-center gap-12 md:flex-row">
 
-                {/* Product Image */}
                 {product.images?.[0] && (
-                    <div className="relative h-[550px] w-full md:w-[55%] rounded-2xl overflow-hidden bg-gray-100 shadow-md flex items-center justify-center">
-
+                    <div className="relative h-[550px] w-full overflow-hidden rounded-2xl bg-gray-100 shadow-md md:w-[55%]">
                         <Image
                             src={product.images[0]}
                             alt={product.name}
                             fill
-                            className="object-contain p-8 transition duration-300 hover:scale-105"
+                            sizes="(max-width:768px)100vw,55vw"
+                            className="object-contain p-8"
                         />
-
                     </div>
                 )}
 
 
-                {/* Product Details */}
-                <div className="md:w-1/2 space-y-6">
+                <div className="space-y-6 md:w-1/2">
 
-                    <h1 className="text-4xl font-bold text-gray-900">
+                    <h1 className="text-4xl font-bold">
                         {product.name}
                     </h1>
 
 
-                    {product.description && (
-                        <p className="text-gray-600 leading-relaxed text-lg">
-                            {product.description}
-                        </p>
-                    )}
+                    <p className="text-lg text-gray-600">
+                        {product.description}
+                    </p>
 
 
-                    {/* Price */}
-                    {price?.unit_amount && (
-                        <p className="text-3xl font-bold text-black">
-                            ${(price.unit_amount / 100).toFixed(2)}
-                        </p>
-                    )}
+                    <div>
+                        {product.labeledPrice > product.price && (
+                            <span className="mr-3 text-gray-400 line-through">
+                                LKR.{product.labeledPrice.toFixed(2)}
+                            </span>
+                        )}
+
+                        <span className="text-3xl font-bold">
+                            LKR.{product.price.toFixed(2)}
+                        </span>
+                    </div>
 
 
-                    {/* Quantity */}
-                    <div className="flex items-center gap-5 pt-4">
+                    <div className="flex items-center gap-5">
 
                         <Button
                             variant="outline"
-                            className="h-10 w-10 text-xl rounded-lg"
+                            className="h-10 w-10"
                             onClick={() => removeItem(product.id)}
                         >
                             -
                         </Button>
-
 
                         <span className="text-xl font-semibold">
                             {quantity}
@@ -99,8 +98,8 @@ export const ProductDetail = ({ product, session }: Props) => {
 
                         <Button
                             variant="outline"
-                            className="h-10 w-10 text-xl rounded-lg"
-                            onClick={onAddItem}
+                            className="h-10 w-10"
+                            onClick={addToCart}
                         >
                             +
                         </Button>
@@ -108,29 +107,28 @@ export const ProductDetail = ({ product, session }: Props) => {
                     </div>
 
 
-                    {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                    <div className="flex flex-col gap-4 sm:flex-row">
 
                         <Button
                             variant="outline"
-                            onClick={onAddItem}
-                            className="w-full sm:w-auto px-8 py-3 text-base rounded-lg"
+                            onClick={addToCart}
+                            className="px-6 py-3 text-base rounded-lg"
                         >
                             Add to Cart
                         </Button>
 
+
                         <Button
-                            className="w-full sm:w-auto px-8 py-3 text-base rounded-lg bg-black text-white hover:bg-gray-900"
+                            className="px-6 py-3 text-base rounded-lg bg-black text-white hover:bg-gray-900"
                             onClick={() => {
-                                if (session) {
-                                    router.push("/checkout")
-                                } else {
-                                    router.push("/sign-in")
-                                }
+                                session
+                                    ? router.push("/checkout")
+                                    : router.push("/sign-in");
                             }}
                         >
                             Buy Now
                         </Button>
+
                     </div>
 
                 </div>
@@ -138,5 +136,5 @@ export const ProductDetail = ({ product, session }: Props) => {
             </div>
 
         </div>
-    )
-}
+    );
+};

@@ -1,16 +1,25 @@
 import { ProductList } from "@/components/product-List";
-import { stripe } from "@/lib/stripe";
+import { getProducts } from "@/lib/actions/product-actions";
+
 
 export default async function ProductsPage() {
 
-    const products = await stripe.products.list({
-        expand: ["data.default_price"],
-    });
+    const response = await getProducts();
+
+
+    if (!response.success || !response.data) {
+        return (
+            <div className="p-10 text-center">
+                Failed to load products
+            </div>
+        );
+    }
+
 
     return (
         <div>
             <ProductList
-                products={products.data}
+                products={response.data}
             />
         </div>
     );

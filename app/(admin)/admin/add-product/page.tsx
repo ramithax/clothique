@@ -94,6 +94,7 @@ export default function AddProductPage() {
                 setStock("")
                 setBrand("")
                 setIsAvailable(false)
+
                 setFileKey(prev => prev + 1)
 
             } else {
