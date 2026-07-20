@@ -87,7 +87,7 @@ export default function CheckoutPage() {
                                     </span>
 
                                     <span className="font-semibold">
-                                        ${((item.price * item.quantity) / 100).toFixed(2)}
+                                        ${(item.price * item.quantity).toFixed(2)}
                                     </span>
                                 </div>
 
@@ -125,7 +125,7 @@ export default function CheckoutPage() {
                             Total
                         </span>
                         <span className="text-xl font-bold">
-                            ${(total / 100).toFixed(2)}
+                            ${total.toFixed(2)}
                         </span>
                     </div>
                 </CardContent>

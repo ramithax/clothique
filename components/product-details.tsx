@@ -73,12 +73,12 @@ export const ProductDetail = ({ product, session }: Props) => {
                     <div>
                         {product.labeledPrice > product.price && (
                             <span className="mr-3 text-gray-400 line-through">
-                                LKR.{product.labeledPrice.toFixed(2)}
+                                ${product.labeledPrice.toFixed(2)}
                             </span>
                         )}
 
                         <span className="text-3xl font-bold">
-                            LKR.{product.price.toFixed(2)}
+                            ${product.price.toFixed(2)}
                         </span>
                     </div>
 
