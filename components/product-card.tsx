@@ -39,10 +39,10 @@ export const ProductCard = ({ product }: Props) => {
                     {/* Price */}
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-400 line-through">
-                            LKR {product.labeledPrice.toFixed(2)}
+                            ${product.labeledPrice.toFixed(2)}
                         </span>
                         <span className="text-lg font-bold text-black">
-                            LKR {product.price.toFixed(2)}
+                            ${product.price.toFixed(2)}
                         </span>
                     </div>
 
