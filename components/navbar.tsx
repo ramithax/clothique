@@ -44,7 +44,6 @@ export const Navbar = ({ session }: { session: Session | null }) => {
         { name: "Home", href: "/" },
         { name: "Products", href: "/products" },
         { name: "About", href: "/about" },
-        { name: "Settings", href: "/settings" }
     ]
 
 
@@ -172,7 +171,14 @@ export const Navbar = ({ session }: { session: Session | null }) => {
                         )}
                     </div>
 
-
+                    {/* Mobile Avatar */}
+                    <div className="md:hidden">
+                        {session && (
+                            <div className="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold uppercase">
+                                {session.user.name?.charAt(0) || "U"}
+                            </div>
+                        )}
+                    </div>
 
                     {/* Mobile Menu Button */}
                     <Button
@@ -214,6 +220,60 @@ export const Navbar = ({ session }: { session: Session | null }) => {
                         </Link>
 
                     ))}
+
+
+                    {/* Mobile Auth */}
+                    {!session && (
+                        <>
+                            <button
+                                onClick={() => {
+                                    router.push("/sign-in")
+                                    setIsMobileOpen(false)
+                                }}
+                                className="text-left py-2 border-b border-gray-100 hover:text-black transition"
+                            >
+                                Sign In
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    router.push("/sign-up")
+                                    setIsMobileOpen(false)
+                                }}
+                                className="text-left py-2 border-b border-gray-100 hover:text-black transition"
+                            >
+                                Sign Up
+                            </button>
+                        </>
+                    )}
+
+
+                    {/* Mobile User Actions */}
+                    {session && (
+                        <>
+                            <button
+                                onClick={() => {
+                                    router.push("/settings")
+                                    setIsMobileOpen(false)
+                                }}
+                                className="text-left py-2 border-b border-gray-100 hover:text-black transition"
+                            >
+                                Settings
+                            </button>
+
+
+                            <button
+                                onClick={async () => {
+                                    await signOut()
+                                    router.refresh()
+                                    setIsMobileOpen(false)
+                                }}
+                                className="text-left py-2 text-red-500 hover:text-red-700 transition"
+                            >
+                                Logout
+                            </button>
+                        </>
+                    )}
 
                 </div>
 
