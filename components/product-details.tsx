@@ -3,10 +3,11 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { useCartStore } from "@/store/cart-store";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { Session } from "@/lib/types/types";
 import type { Product } from "@/lib/types/product";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 
 interface Props {
@@ -17,7 +18,8 @@ interface Props {
 
 export const ProductDetail = ({ product, session }: Props) => {
 
-    const { items, addItem, removeItem } = useCartStore();
+    const [selectedQuantity, setSelectedQuantity] = useState(1);
+    const { items, addItem } = useCartStore();
     const router = useRouter();
 
     const cartItem = items.find(item => item.id === product.id);
@@ -31,7 +33,7 @@ export const ProductDetail = ({ product, session }: Props) => {
             name: product.name,
             price: product.price,
             imageUrl: product.images?.[0] || null,
-            quantity: 1
+            quantity: selectedQuantity
         });
 
         toast.success("Item added to cart", {
@@ -39,6 +41,21 @@ export const ProductDetail = ({ product, session }: Props) => {
         });
     };
 
+    const handleBuyNow = () => {
+        const item = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: product.images?.[0] || null,
+            quantity: selectedQuantity
+        };
+
+        // ✅ Save temporarily
+        sessionStorage.setItem("checkoutItem", JSON.stringify(item));
+
+        // ✅ Go to checkout
+        router.push("/checkout");
+    };
 
     return (
         <div className="mx-auto max-w-6xl py-12">
@@ -88,20 +105,19 @@ export const ProductDetail = ({ product, session }: Props) => {
                         <Button
                             variant="outline"
                             className="h-10 w-10"
-                            onClick={() => removeItem(product.id)}
+                            onClick={() => setSelectedQuantity(prev => Math.max(1, prev - 1))}
                         >
                             -
                         </Button>
 
                         <span className="text-xl font-semibold">
-                            {quantity}
+                            {selectedQuantity}
                         </span>
-
 
                         <Button
                             variant="outline"
                             className="h-10 w-10"
-                            onClick={addToCart}
+                            onClick={() => setSelectedQuantity(prev => prev + 1)}
                         >
                             +
                         </Button>
@@ -122,11 +138,7 @@ export const ProductDetail = ({ product, session }: Props) => {
 
                         <Button
                             className="px-6 py-3 text-base rounded-lg bg-black text-white hover:bg-gray-900"
-                            onClick={() => {
-                                session
-                                    ? router.push("/checkout")
-                                    : router.push("/sign-in");
-                            }}
+                            onClick={handleBuyNow}
                         >
                             Buy Now
                         </Button>
