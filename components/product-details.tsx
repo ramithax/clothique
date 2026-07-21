@@ -23,8 +23,6 @@ export const ProductDetail = ({ product, session }: Props) => {
     const router = useRouter();
 
     const cartItem = items.find(item => item.id === product.id);
-    const quantity = cartItem?.quantity ?? 0;
-
 
     const addToCart = () => {
 
@@ -42,6 +40,11 @@ export const ProductDetail = ({ product, session }: Props) => {
     };
 
     const handleBuyNow = () => {
+
+        if (!requireAuth()) {
+            return;
+        };
+
         const item = {
             id: product.id,
             name: product.name,
@@ -55,6 +58,16 @@ export const ProductDetail = ({ product, session }: Props) => {
 
         // ✅ Go to checkout
         router.push("/checkout");
+    };
+
+    const requireAuth = () => {
+        if (!session) {
+            toast.error("Please login first");
+
+            router.push("/sign-in");
+            return false;
+        }
+        return true;
     };
 
     return (
@@ -85,6 +98,18 @@ export const ProductDetail = ({ product, session }: Props) => {
                     <p className="text-lg text-gray-600">
                         {product.description}
                     </p>
+
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">
+                            Stock: {product.stock}
+                        </span>
+
+                        {!product.isAvailable && (
+                            <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600">
+                                Out of stock
+                            </span>
+                        )}
+                    </div>
 
 
                     <div>
