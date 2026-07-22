@@ -1,11 +1,27 @@
-export default function SettingsPage() {
+import { auth } from "@/lib/auth";
+import SettingsForm from "./settingsForm";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { getUserById } from "@/lib/actions/user-actions";
 
-    return (
-        <div>
-            <h1 className="text-center font-semibold text-3xl">Settings</h1>
+export default async function SettingsPage() {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
 
+    if (!session) {
+        redirect("/")
+    }
 
-            <h1>Page is in construnction</h1>
-        </div>
-    )
+    const res = await getUserById(session.user.id)
+
+    if (!res.success || !res.data) {
+        return (
+            <div className="p-6 text-red-500 text-center">
+                Failed to load user
+            </div>
+        )
+    }
+
+    return <SettingsForm user={res.data as any} />
 }
