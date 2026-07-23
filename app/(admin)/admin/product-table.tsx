@@ -1,5 +1,3 @@
-"use client"
-
 import AddButton from "@/components/add-button"
 import Image from "next/image"
 import Link from "next/link"
