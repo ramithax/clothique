@@ -1,12 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { createProduct } from "@/lib/actions/product-actions";
+import { createProduct, getProductById } from "@/lib/actions/product-actions";
 import { uploadImage } from "@/lib/utils/supabase";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export default function EditProductForm() {
+export default function EditProductForm({ id }: { id?: string }) {
 
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
@@ -20,6 +20,28 @@ export default function EditProductForm() {
 
     const [loading, setLoading] = useState(false)
     const [fileKey, setFileKey] = useState(0)
+
+    useEffect(() => {
+        if (!id) return;
+
+        const fetchProduct = async () => {
+            const product = await getProductById(id);
+
+            if (product) {
+                setName(product.name);
+                setDescription(product.description || "");
+                setPrice(String(product.price));
+                setLabeledPrice(String(product.labeledPrice));
+                setCategory(product.category || "");
+                setStock(String(product.stock));
+                setBrand(product.brand || "");
+                setIsAvailable(product.isAvailable);
+                setExistingImages(product.images || []);
+            }
+        };
+
+        fetchProduct();
+    }, [id]);
 
     const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
