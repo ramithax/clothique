@@ -134,3 +134,30 @@ export async function editProduct(id: string, formData: FormData) {
         }
     }
 }
+
+export async function deleteProduct(id: string) {
+
+    try {
+
+        const product = await prisma.product.delete({
+            where: {
+                id: id
+            }
+        })
+
+        return {
+            success: true,
+            message: "Product deleted successfully"
+        }
+
+    } catch (error) {
+
+        console.log(error)
+
+        return {
+            success: false,
+            message: "Failed to delete product"
+        }
+    }
+
+}

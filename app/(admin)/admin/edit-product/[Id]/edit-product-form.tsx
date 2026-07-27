@@ -1,8 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { createProduct, getProductById } from "@/lib/actions/product-actions";
+import { createProduct, editProduct, getProductById } from "@/lib/actions/product-actions";
 import { uploadImage } from "@/lib/utils/supabase";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -13,6 +14,7 @@ export default function EditProductForm({ id }: { id?: string }) {
     const [price, setPrice] = useState("")
     const [labeledPrice, setLabeledPrice] = useState("")
     const [images, setImages] = useState<File[]>([])
+    const [existingImages, setExistingImages] = useState<string[]>([])
     const [category, setCategory] = useState("")
     const [stock, setStock] = useState("")
     const [brand, setBrand] = useState("")
@@ -21,11 +23,20 @@ export default function EditProductForm({ id }: { id?: string }) {
     const [loading, setLoading] = useState(false)
     const [fileKey, setFileKey] = useState(0)
 
+    const router = useRouter()
+
     useEffect(() => {
         if (!id) return;
 
         const fetchProduct = async () => {
-            const product = await getProductById(id);
+            const res = await getProductById(id);
+
+            if (!res.success) {
+                toast.error(res.message)
+                return
+            }
+
+            const product = res.data
 
             if (product) {
                 setName(product.name);
@@ -36,7 +47,9 @@ export default function EditProductForm({ id }: { id?: string }) {
                 setStock(String(product.stock));
                 setBrand(product.brand || "");
                 setIsAvailable(product.isAvailable);
-                setExistingImages(product.images || []);
+                if (product.images) {
+                    setExistingImages(product.images as string[]);
+                }
             }
         };
 
@@ -60,35 +73,46 @@ export default function EditProductForm({ id }: { id?: string }) {
             return
         }
 
-        if (images.length === 0) {
+        if (images.length === 0 && existingImages.length === 0) {
             toast.error("At least one image is required")
             setLoading(false)
             return
         }
 
-        const imageUploadPromises: Promise<string>[] = []
+        let imageUrls = existingImages;
 
-        for (let i = 0; i < images.length; i++) {
-            const file = images[i]
+        if (images.length > 0) {
+            const imageUploadPromises: Promise<string>[] = []
 
-            if (!file.type.startsWith("image/")) {
-                toast.error("Only image files are allowed")
+            for (let i = 0; i < images.length; i++) {
+                const file = images[i]
+
+                if (!file.type.startsWith("image/")) {
+                    toast.error("Only image files are allowed")
+                    setLoading(false)
+                    return
+                }
+
+                if (file.size > 2 * 1024 * 1024) {
+                    toast.error("Each image must be less than 2MB")
+                    setLoading(false)
+                    return
+                }
+
+                imageUploadPromises.push(uploadImage(file))
+            }
+
+            try {
+                imageUrls = await Promise.all(imageUploadPromises)
+            } catch (error) {
+                console.error("Image upload failed", error)
+                toast.error("Upload failed. Try again.")
                 setLoading(false)
                 return
             }
-
-            if (file.size > 2 * 1024 * 1024) {
-                toast.error("Each image must be less than 2MB")
-                setLoading(false)
-                return
-            }
-
-            imageUploadPromises.push(uploadImage(file))
         }
 
         try {
-            const imageUrls = await Promise.all(imageUploadPromises)
-
             const formData = new FormData()
 
             formData.append("name", name.trim())
@@ -101,7 +125,11 @@ export default function EditProductForm({ id }: { id?: string }) {
             formData.append("brand", brand.trim())
             formData.append("isAvailable", String(isAvailable))
 
-            const response = await createProduct(formData)
+            if (!id) {
+                throw new Error("Product ID is missing");
+            }
+
+            const response = await editProduct(id, formData)
 
             if (response.success) {
                 toast.success(response.message)
@@ -122,6 +150,8 @@ export default function EditProductForm({ id }: { id?: string }) {
             } else {
                 toast.error(response.message)
             }
+
+            router.push("/admin")
 
         } catch (error) {
             console.error("Something went wrong", error)
@@ -231,7 +261,7 @@ export default function EditProductForm({ id }: { id?: string }) {
                     />
 
                     <p className="text-xs text-gray-500 mt-1">
-                        Max size: 2MB per image
+                        Max size: 2MB per image. {existingImages.length > 0 && "Leave empty to keep the existing images."}
                     </p>
                 </div>
 
@@ -293,7 +323,7 @@ export default function EditProductForm({ id }: { id?: string }) {
                     disabled={loading}
                     className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition disabled:opacity-50"
                 >
-                    {loading ? "Adding..." : "Add Product"}
+                    {loading ? "Saving changes..." : "Save"}
                 </Button>
 
             </form>

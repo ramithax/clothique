@@ -1,6 +1,11 @@
+"use client"
+
 import AddButton from "@/components/add-button"
 import Image from "next/image"
 import Link from "next/link"
+import { toast } from "sonner"
+import { deleteProduct } from "@/lib/actions/product-actions"
+import { useRouter } from "next/navigation"
 
 type Product = {
     id: string
@@ -15,6 +20,29 @@ type Product = {
 }
 
 export default function ProductTable({ products }: { products: Product[] }) {
+
+    const router = useRouter()
+
+    const handleDelete = async (id: string) => {
+
+        try {
+
+            const confirmDelete = confirm("Are you sure you want to delete this product?");
+            if (!confirmDelete) return;
+
+            const response = await deleteProduct(id)
+
+            if (response.success) {
+                toast.success("Product deleted successfully")
+                router.refresh()
+            }
+            else {
+                toast.error("Failed to delete product")
+            }
+        } catch (error) {
+            toast.error("Something went wrong")
+        }
+    }
 
     return (
 
@@ -127,16 +155,23 @@ export default function ProductTable({ products }: { products: Product[] }) {
                                     {/* Actions */}
                                     <td className="px-6 py-4 text-right space-x-4">
 
-                                        <Link
-                                            href={`/admin/edit-product/${product.id}`}
-                                            className="text-blue-600 text-sm hover:underline"
-                                        >
-                                            Edit
-                                        </Link>
+                                        <div className="flex justify-end gap-2">
 
-                                        <button className="text-red-600 text-sm hover:underline">
-                                            Delete
-                                        </button>
+                                            <Link
+                                                href={`/admin/edit-product/${product.id}`}
+                                                className="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition"
+                                            >
+                                                Edit
+                                            </Link>
+
+                                            <button
+                                                onClick={() => handleDelete(product.id)}
+                                                className="px-3 py-1.5 text-xs font-medium bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition"
+                                            >
+                                                Delete
+                                            </button>
+
+                                        </div>
 
                                     </td>
 

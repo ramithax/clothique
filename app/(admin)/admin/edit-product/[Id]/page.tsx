@@ -1,7 +1,7 @@
 import EditProductForm from "./edit-product-form"
 
-export default function EditProductPage({ params }: { params: { id: string } }) {
+export default async function EditProductPage({ params }: { params: Promise<{ Id: string }> }) {
+    const resolvedParams = await params;
 
-
-    return <EditProductForm id={params.id} />
+    return <EditProductForm id={resolvedParams.Id} />
 }
