@@ -1,0 +1,187 @@
+"use client"
+
+import AddButton from "@/components/add-button"
+import Image from "next/image"
+import Link from "next/link"
+import { toast } from "sonner"
+import { deleteProduct } from "@/lib/actions/product-actions"
+import { useRouter } from "next/navigation"
+
+type Product = {
+    id: string
+    name: string
+    price: number
+    labeledPrice: number
+    stock: number
+    category: string
+    brand: string
+    isAvailable: boolean
+    images: string[]
+}
+
+export default function ProductTable({ products }: { products: Product[] }) {
+
+    const router = useRouter()
+
+    const handleDelete = async (id: string) => {
+
+        try {
+
+            const confirmDelete = confirm("Are you sure you want to delete this product?");
+            if (!confirmDelete) return;
+
+            const response = await deleteProduct(id)
+
+            if (response.success) {
+                toast.success("Product deleted successfully")
+                router.refresh()
+            }
+            else {
+                toast.error("Failed to delete product")
+            }
+        } catch (error) {
+            toast.error("Something went wrong")
+        }
+    }
+
+    return (
+
+        <div className="max-w-6xl mx-auto p-6">
+
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+                <h1 className="text-2xl font-semibold text-gray-800">
+                    Products
+                </h1>
+
+                <Link href="/admin/add-product">
+                    <AddButton />
+                </Link>
+            </div>
+
+            {/* Table */}
+            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+
+                {products.length === 0 ? (
+                    <div className="text-center py-16 text-gray-500">
+                        No products found
+                    </div>
+                ) : (
+                    <table className="w-full text-sm text-left">
+
+                        {/* Table Head */}
+                        <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+                            <tr>
+                                <th className="px-6 py-3">Product</th>
+                                <th className="px-6 py-3">Price</th>
+                                <th className="px-6 py-3">Labeled Price</th>
+                                <th className="px-6 py-3">Stock</th>
+                                <th className="px-6 py-3">Category</th>
+                                <th className="px-6 py-3">Brand</th>
+                                <th className="px-6 py-3">Status</th>
+                                <th className="px-6 py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+
+                        {/* Table Body */}
+                        <tbody>
+                            {products.map((product) => (
+                                <tr
+                                    key={product.id}
+                                    className="border-b hover:bg-gray-50"
+                                >
+
+                                    {/* Product */}
+                                    <td className="px-6 py-4 flex items-center gap-3">
+                                        <Image
+                                            src={product.images?.[0] || "/placeholder.png"}
+                                            alt={product.name}
+                                            width={48}
+                                            height={48}
+                                            className="rounded-md object-cover"
+                                        />
+                                        <div>
+                                            <p className="font-medium text-gray-800">
+                                                {product.name}
+                                            </p>
+                                        </div>
+                                    </td>
+
+                                    {/* Price */}
+                                    <td className="px-6 py-4">
+                                        {new Intl.NumberFormat("en-US", {
+                                            style: "currency",
+                                            currency: "LKR",
+                                        }).format(product.price)}
+                                    </td>
+
+                                    {/* Labeled Price */}
+                                    <td className="px-6 py-4">
+                                        {new Intl.NumberFormat("en-US", {
+                                            style: "currency",
+                                            currency: "LKR",
+                                        }).format(product.labeledPrice)}
+                                    </td>
+
+                                    {/* Stock */}
+                                    <td className="px-6 py-4">
+                                        {product.stock}
+                                    </td>
+
+                                    {/* Category */}
+                                    <td className="px-6 py-4">
+                                        {product.category}
+                                    </td>
+
+                                    {/* Brand */}
+                                    <td className="px-6 py-4">
+                                        {product.brand}
+                                    </td>
+
+                                    {/* Status */}
+                                    <td className="px-6 py-4">
+                                        <span
+                                            className={`text-xs font-medium ${product.isAvailable
+                                                ? "text-green-600"
+                                                : "text-red-500"
+                                                }`}
+                                        >
+                                            {product.isAvailable
+                                                ? "Available"
+                                                : "Unavailable"}
+                                        </span>
+                                    </td>
+
+                                    {/* Actions */}
+                                    <td className="px-6 py-4 text-right space-x-4">
+
+                                        <div className="flex justify-end gap-2">
+
+                                            <Link
+                                                href={`/admin/edit-product/${product.id}`}
+                                                className="px-3 py-1.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition"
+                                            >
+                                                Edit
+                                            </Link>
+
+                                            <button
+                                                onClick={() => handleDelete(product.id)}
+                                                className="px-3 py-1.5 text-xs font-medium bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition"
+                                            >
+                                                Delete
+                                            </button>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            ))}
+                        </tbody>
+
+                    </table>
+                )}
+            </div>
+        </div>
+    )
+}

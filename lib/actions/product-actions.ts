@@ -76,3 +76,88 @@ export async function getProducts(options?: {
         return { success: false, message: "Failed to fetch products" }
     }
 }
+
+export async function getProductById(id: string) {
+
+    try {
+
+        const product = await prisma.product.findUnique({
+            where: {
+                id: id
+            }
+        })
+
+        return {
+            success: true,
+            data: product,
+            message: "Product fetched successfully"
+        }
+
+    } catch (error) {
+        console.log(error)
+
+        return {
+            success: false,
+            data: null,
+            message: "Failed to fetch product"
+        }
+    }
+}
+
+
+export async function editProduct(id: string, formData: FormData) {
+
+    try {
+        const updated = await prisma.product.update({
+            where: { id },
+            data: {
+                name: formData.get("name") as string,
+                description: formData.get("description") as string,
+                price: Number(formData.get("price")),
+                labeledPrice: Number(formData.get("labeledPrice")),
+                images: JSON.parse(formData.get("images") as string),
+                category: formData.get("category") as string,
+                stock: Number(formData.get("stock")),
+                brand: formData.get("brand") as string,
+                isAvailable: formData.get("isAvailable") === "true",
+            }
+        })
+
+        return { success: true, message: "Product updated" }
+
+    } catch (error) {
+        console.log(error)
+
+        return {
+            success: false,
+            message: "Failed to update product"
+        }
+    }
+}
+
+export async function deleteProduct(id: string) {
+
+    try {
+
+        const product = await prisma.product.delete({
+            where: {
+                id: id
+            }
+        })
+
+        return {
+            success: true,
+            message: "Product deleted successfully"
+        }
+
+    } catch (error) {
+
+        console.log(error)
+
+        return {
+            success: false,
+            message: "Failed to delete product"
+        }
+    }
+
+}
