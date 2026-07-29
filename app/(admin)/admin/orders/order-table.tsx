@@ -114,12 +114,16 @@ export default function OrderTable({ orders }: { orders: Order[] }) {
                                     <td className="px-6 py-4">
                                         <span
                                             className={`text-xs font-medium ${order.status === "PAID"
-                                                ? "text-green-600"
-                                                : order.status === "PENDING"
-                                                    ? "text-yellow-500"
-                                                    : order.status === "CANCELLED"
-                                                        ? "text-red-500"
-                                                        : "text-gray-500"
+                                                    ? "text-green-600"
+                                                    : order.status === "PENDING"
+                                                        ? "text-yellow-500"
+                                                        : order.status === "SHIPPED"
+                                                            ? "text-blue-500"
+                                                            : order.status === "DELIVERED"
+                                                                ? "text-green-700"
+                                                                : order.status === "CANCELLED"
+                                                                    ? "text-red-500"
+                                                                    : "text-gray-500"
                                                 }`}
                                         >
                                             {order.status}
@@ -171,7 +175,8 @@ export default function OrderTable({ orders }: { orders: Order[] }) {
                             onChange={(e) => setStatus(e.target.value as OrderStatus)}
                         >
                             <option value="PENDING">PENDING</option>
-                            <option value="IN_PROGRESS">IN PROGRESS</option>
+                            <option value="PAID">PAID</option>
+                            <option value="SHIPPED">SHIPPED</option>
                             <option value="DELIVERED">DELIVERED</option>
                             <option value="CANCELLED">CANCELLED</option>
                         </select>
