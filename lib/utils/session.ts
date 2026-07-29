@@ -1,16 +1,18 @@
-import { error } from "console";
-import { auth } from "../auth";
-import { headers } from "next/headers";
+import prisma from "@/lib/prisma"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
 
-export async function requiredAdmin() {
-
+export async function isAdmin() {
     const session = await auth.api.getSession({
-        headers: await headers()
+        headers: await headers(),
     })
 
-    if (!session) {
-        throw new Error("Unauthorized")
-    }
+    if (!session?.user?.email) return false
 
-    return session
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { role: true },
+    })
+
+    return user?.role === "ADMIN"
 }

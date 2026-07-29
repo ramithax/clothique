@@ -1,8 +1,16 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { isAdmin } from "../utils/session";
 
 export async function createProduct(formData: FormData) {
+
+    const admin = await isAdmin()
+
+    if (!admin) {
+        return { error: "Not allowed" }
+    }
+
     try {
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
@@ -79,6 +87,12 @@ export async function getProducts(options?: {
 
 export async function getProductById(id: string) {
 
+    const admin = await isAdmin()
+
+    if (!admin) {
+        return { error: "Not allowed" }
+    }
+
     try {
 
         const product = await prisma.product.findUnique({
@@ -106,6 +120,12 @@ export async function getProductById(id: string) {
 
 
 export async function editProduct(id: string, formData: FormData) {
+
+    const admin = await isAdmin()
+
+    if (!admin) {
+        return { error: "Not allowed" }
+    }
 
     try {
         const updated = await prisma.product.update({
@@ -136,6 +156,12 @@ export async function editProduct(id: string, formData: FormData) {
 }
 
 export async function deleteProduct(id: string) {
+
+    const admin = await isAdmin()
+
+    if (!admin) {
+        return { error: "Not allowed" }
+    }
 
     try {
 
