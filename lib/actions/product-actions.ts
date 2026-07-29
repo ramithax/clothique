@@ -66,12 +66,6 @@ export async function createProduct(formData: FormData) {
 export async function getProducts(options?: {
     includeUnavailable?: boolean
 }) {
-
-    const admin = await isAdmin()
-
-    if (!admin) {
-        return { error: "Not allowed" }
-    }
     const includeUnavailable = options?.includeUnavailable ?? false
 
     try {

@@ -1,8 +1,11 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { useState } from "react"
+import { toast } from "sonner"
+import { OrderStatus } from "@/lib/generated/prisma/enums"
+import { editOrderStatus } from "@/lib/actions/order-actions"
+import { useRouter } from "next/navigation"
 
 type Order = {
     id: string
@@ -19,10 +22,34 @@ export default function OrderTable({ orders }: { orders: Order[] }) {
 
     const [isModalOpen, setIsMoalOpen] = useState(false)
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+    const [status, setStatus] = useState<OrderStatus>("PENDING")
+
+    const router = useRouter()
 
     const handleViewOrder = (order: Order) => {
         setSelectedOrder(order)
+        setStatus(order.status as OrderStatus)
         setIsMoalOpen(true)
+    }
+    const handleSaveStatus = async (id: string, newStatus: OrderStatus) => {
+
+        try {
+
+            const res = await editOrderStatus(id, newStatus)
+
+            if (res.success) {
+                toast.success(res.message)
+                setIsMoalOpen(false)
+                router.refresh()
+            } else {
+                toast.error(res.message)
+            }
+
+        } catch (error) {
+
+            console.log(error)
+            toast.error("Failed to update status")
+        }
     }
 
     return (
@@ -138,11 +165,15 @@ export default function OrderTable({ orders }: { orders: Order[] }) {
                         <p><strong>Status:</strong> {selectedOrder.status}</p>
 
                         {/* Status Dropdown */}
-                        <select className="mt-4 border p-2 w-full">
-                            <option>PENDING</option>
-                            <option>IN PROGRESS</option>
-                            <option>DELIVERED</option>
-                            <option>CANCELLED</option>
+                        <select
+                            className="mt-4 border p-2 w-full"
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value as OrderStatus)}
+                        >
+                            <option value="PENDING">PENDING</option>
+                            <option value="IN_PROGRESS">IN PROGRESS</option>
+                            <option value="DELIVERED">DELIVERED</option>
+                            <option value="CANCELLED">CANCELLED</option>
                         </select>
 
                         {/* Buttons */}
@@ -156,6 +187,13 @@ export default function OrderTable({ orders }: { orders: Order[] }) {
 
                             <button
                                 className="px-4 py-2 bg-blue-600 text-white rounded"
+                                onClick={
+                                    () => {
+                                        if (selectedOrder) {
+                                            handleSaveStatus(selectedOrder.id, status)
+                                        }
+                                    }
+                                }
                             >
                                 Save
                             </button>

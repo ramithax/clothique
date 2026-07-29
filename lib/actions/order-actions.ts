@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma"
 import { isAdmin } from "../utils/session"
+import { OrderStatus } from "../generated/prisma/enums"
 
 export const getOrders = async () => {
     try {
@@ -21,15 +22,25 @@ export const getOrders = async () => {
     }
 }
 
-export const editOrderStatus = async (id: string, status: string) => {
+export const editOrderStatus = async (id: string, status: OrderStatus) => {
 
     const admin = await isAdmin()
 
     if (!admin) {
-        return { error: "Not allowed" }
+        return { success: false, message: "Not allowed" }
     }
 
     try {
+
+        await prisma.order.update({
+            where: { id },
+            data: { status }
+        })
+
+        return {
+            success: true,
+            message: "Order updated successfully"
+        }
 
     } catch (error) {
         return {
@@ -37,5 +48,4 @@ export const editOrderStatus = async (id: string, status: string) => {
             message: "Failed to update order status"
         }
     }
-
 }
