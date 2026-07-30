@@ -114,16 +114,16 @@ export default function OrderTable({ orders }: { orders: Order[] }) {
                                     <td className="px-6 py-4">
                                         <span
                                             className={`text-xs font-medium ${order.status === "PAID"
-                                                    ? "text-green-600"
-                                                    : order.status === "PENDING"
-                                                        ? "text-yellow-500"
-                                                        : order.status === "SHIPPED"
-                                                            ? "text-blue-500"
-                                                            : order.status === "DELIVERED"
-                                                                ? "text-green-700"
-                                                                : order.status === "CANCELLED"
-                                                                    ? "text-red-500"
-                                                                    : "text-gray-500"
+                                                ? "text-green-600"
+                                                : order.status === "PENDING"
+                                                    ? "text-yellow-500"
+                                                    : order.status === "SHIPPED"
+                                                        ? "text-blue-500"
+                                                        : order.status === "DELIVERED"
+                                                            ? "text-green-700"
+                                                            : order.status === "CANCELLED"
+                                                                ? "text-red-500"
+                                                                : "text-gray-500"
                                                 }`}
                                         >
                                             {order.status}
@@ -191,7 +191,7 @@ export default function OrderTable({ orders }: { orders: Order[] }) {
                             </button>
 
                             <button
-                                className="px-4 py-2 bg-blue-600 text-white rounded"
+                                className="px-4 py-2 bg-black text-white rounded hover:cursor-pointer"
                                 onClick={
                                     () => {
                                         if (selectedOrder) {

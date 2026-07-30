@@ -1,9 +1,17 @@
 "use server"
 
 import prisma from "@/lib/prisma"
+import { isAdmin } from "../utils/session"
 
 export async function getUsers() {
     try {
+
+        const admin = await isAdmin()
+
+        if (!admin) {
+            return { success: false, message: "Not allowed" }
+        }
+
         const users = await prisma.user.findMany({
             orderBy: {
                 createdAt: "desc"
@@ -37,6 +45,12 @@ export async function getUserById(id: string) {
 
     try {
 
+        const admin = await isAdmin()
+
+        if (!admin) {
+            return { success: false, message: "Not allowed" }
+        }
+
         const user = await prisma.user.findUnique({
             where: {
                 id: id
@@ -63,5 +77,52 @@ export async function getUserById(id: string) {
             success: false,
             data: []
         }
+    }
+}
+
+
+export async function updateUser(data: {
+    id: string
+    role: string
+    emailVerified: boolean
+}) {
+
+    try {
+
+        const admin = await isAdmin()
+
+        if (!admin) {
+            return { success: false, message: "Not allowed" }
+        }
+
+        const updated = await prisma.user.update({
+            where: { id: data.id },
+            data: {
+                role: data.role,
+                emailVerified: data.emailVerified
+            }
+        })
+
+        if (!updated) {
+            return {
+                success: false,
+                message: "Failed to update user"
+            }
+        }
+
+        return {
+            success: true,
+            data: updated
+        }
+
+    } catch (error) {
+
+        console.log(error)
+
+        return {
+            success: false,
+            message: "Failed to update user"
+        }
+
     }
 }
