@@ -17,6 +17,25 @@ export const SignUpForm = () => {
 
     const router = useRouter()
 
+    const getErrorMessage = (message: string) => {
+
+        if (!message) return "Something went wrong"
+
+        if (message.toLowerCase().includes("already")) {
+            return "Email is already registered"
+        }
+
+        if (message.toLowerCase().includes("password")) {
+            return "Password must be at least 8 characters"
+        }
+
+        if (message.toLowerCase().includes("invalid")) {
+            return "Invalid input provided"
+        }
+
+        return message
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
@@ -32,12 +51,11 @@ export const SignUpForm = () => {
 
             const response = await signUp(username, email, password)
 
-            if (!response.user) {
-
-                toast.error("Failed to create account", {
+            if (response?.error) {
+                toast.error(getErrorMessage(response.error.message), {
                     id: toastId,
                 })
-
+                return
             } else {
 
                 toast.success("Account created successfully", {
