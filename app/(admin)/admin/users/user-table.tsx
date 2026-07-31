@@ -46,7 +46,7 @@ export default function UserTable({
                 emailVerified: selectedUser.emailVerified
             })
 
-            if (!res.success) {
+            if (res.success) {
                 toast.success("User updated successfully")
                 setIsModalOpen(false)
                 setSelectedUser(null)
