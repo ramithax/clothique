@@ -103,7 +103,7 @@ export const SignInForm = () => {
                             className="w-full px-4 py-2.5 border rounded-lg bg-gray-50 dark:bg-[#1a1b20] border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
 
-                        <p className="text-xs text-gray-500 mt-1 text-left">
+                        <p className="text-xs text-gray-500 mt-0.5 text-left">
                             <span>Forgot password?</span>
                             <Link href="/forgot-password">
                                 <span className="ml-1 text-black dark:text-white hover:underline hover:underline">Reset</span>
