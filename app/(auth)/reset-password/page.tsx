@@ -1,14 +1,10 @@
 "use client"
 
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-export default function ResetPasswordPage() {
-
-    const params = useSearchParams()
-    const token = params.get("token")
+export default function ResetPasswordClient({ token }: { token?: string }) {
 
     const [password, setPassword] = useState("")
     const [confirm, setConfirm] = useState("")
@@ -17,26 +13,18 @@ export default function ResetPasswordPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
+        if (!token) {
+            return toast.error("Invalid reset link")
+        }
+
         if (password !== confirm) {
             return toast.error("Passwords do not match")
         }
 
         setLoading(true)
-        const toastId = toast.loading("Updating password...")
 
         try {
-            // TODO: call backend with token + password
-
-            toast.success("Password updated successfully", {
-                id: toastId,
-            })
-
-        } catch (err) {
-
-            toast.error("Invalid or expired link", {
-                id: toastId,
-            })
-
+            // call backend with token + password
         } finally {
             setLoading(false)
         }
