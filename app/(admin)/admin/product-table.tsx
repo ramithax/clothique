@@ -111,7 +111,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
                                     <td className="px-6 py-4">
                                         {new Intl.NumberFormat("en-US", {
                                             style: "currency",
-                                            currency: "LKR",
+                                            currency: "USD",
                                         }).format(product.price)}
                                     </td>
 
@@ -119,7 +119,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
                                     <td className="px-6 py-4">
                                         {new Intl.NumberFormat("en-US", {
                                             style: "currency",
-                                            currency: "LKR",
+                                            currency: "USD",
                                         }).format(product.labeledPrice)}
                                     </td>
 
