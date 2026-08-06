@@ -1,10 +1,13 @@
 "use client"
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 
-export default function ResetPasswordClient({ token }: { token?: string }) {
+function ResetPasswordForm() {
+    const searchParams = useSearchParams()
+    const email = searchParams.get("email")
 
     const [password, setPassword] = useState("")
     const [confirm, setConfirm] = useState("")
@@ -13,8 +16,8 @@ export default function ResetPasswordClient({ token }: { token?: string }) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        if (!token) {
-            return toast.error("Invalid reset link")
+        if (!email) {
+            return toast.error("Invalid reset link (missing email)")
         }
 
         if (password !== confirm) {
@@ -24,7 +27,7 @@ export default function ResetPasswordClient({ token }: { token?: string }) {
         setLoading(true)
 
         try {
-            // call backend with token + password
+            // call backend with email + password
         } finally {
             setLoading(false)
         }
@@ -68,5 +71,13 @@ export default function ResetPasswordClient({ token }: { token?: string }) {
             </div>
 
         </div>
+    )
+}
+
+export default function ResetPasswordClient() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ResetPasswordForm />
+        </Suspense>
     )
 }

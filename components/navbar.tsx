@@ -125,7 +125,7 @@ export const Navbar = ({ session }: { session: Session | null }) => {
                                     onClick={() => {
                                         setIsDropdownOpen(prev => !prev)
                                     }}
-                                    className="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold uppercase"
+                                    className="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold uppercase cursor-pointer"
                                 >
                                     {session.user.name?.charAt(0) || "U"}
                                 </button>
