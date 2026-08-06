@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
+import { requestPasswordReset } from "@/lib/actions/auth-actions";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -14,14 +15,17 @@ export default function ForgotPasswordPage() {
 
         setLoading(true)
         const toastId = toast.loading("Sending reset link...")
-
         try {
-            // TODO: call backend
-            // await requestPasswordReset(email)
 
-            toast.success("If this email exists, a reset link was sent", {
-                id: toastId,
-            })
+            const res = await requestPasswordReset(email)
+
+            if (res.status === "success") {
+                toast.success(res.message, { id: toastId })
+                window.location.href = `/reset-password?email=${email}`
+
+            } else {
+                toast.error(res.message, { id: toastId })
+            }
 
         } catch (err) {
 
@@ -46,7 +50,7 @@ export default function ForgotPasswordPage() {
                     </h1>
 
                     <p className="text-sm text-gray-500 mt-2">
-                        Enter your email to receive a reset link
+                        Enter your email to receive a reset code
                     </p>
 
                 </div>
@@ -63,7 +67,7 @@ export default function ForgotPasswordPage() {
                     />
 
                     <Button className="w-full text-white" disabled={loading}>
-                        {loading ? "Sending..." : "Send Reset Link"}
+                        {loading ? "Sending..." : "Send Reset Code"}
                     </Button>
 
                 </form>
