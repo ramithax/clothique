@@ -1,42 +1,74 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { requestPasswordReset } from "@/lib/actions/auth-actions";
+import { requestPasswordReset, verifyResetCode } from "@/lib/actions/auth-actions";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function ForgotPasswordPage() {
 
     const [email, setEmail] = useState("")
+    const [code, setCode] = useState("")
+    const [codeSent, setCodeSent] = useState(false)
     const [loading, setLoading] = useState(false)
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+    const router = useRouter()
+
+    const handleSendCode = async () => {
 
         setLoading(true)
-        const toastId = toast.loading("Sending reset link...")
+        const toastId = toast.loading("Sending code...")
+
         try {
 
             const res = await requestPasswordReset(email)
 
             if (res.status === "success") {
-                toast.success(res.message, { id: toastId })
-                window.location.href = `/reset-password?email=${email}`
-
+                toast.success("Code sent successfully", { id: toastId })
+                setCodeSent(true)
             } else {
                 toast.error(res.message, { id: toastId })
             }
 
-        } catch (err) {
-
-            toast.error("Something went wrong", {
-                id: toastId,
-            })
-
-        } finally {
+        } catch {
+            toast.error("Something went wrong", { id: toastId })
+        }
+        finally {
             setLoading(false)
         }
     }
+
+
+    const handleVerify = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        setLoading(true)
+
+        try {
+
+            const res = await verifyResetCode(email, code)
+
+            if (res.status === "success") {
+                toast.success("Code verified successfully")
+                router.push(`/reset-password?email=${email}`)
+
+            }
+            else {
+                toast.error("Invalid code")
+            }
+
+        } catch (error) {
+
+            console.log(error)
+            toast.error("Something went wrong")
+
+        }
+        finally {
+            setLoading(false)
+        }
+    }
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-[#0b0c10] px-4">
@@ -55,22 +87,59 @@ export default function ForgotPasswordPage() {
 
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
 
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Email address"
-                        required
-                        className="w-full px-4 py-2.5 border rounded-lg bg-gray-50 dark:bg-[#1a1b20] border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                <div className="space-y-4">
 
-                    <Button className="w-full text-white" disabled={loading}>
-                        {loading ? "Sending..." : "Send Reset Code"}
-                    </Button>
 
-                </form>
+                    <div className="flex gap-2 items-center">
+
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email address"
+                            disabled={codeSent}
+                            required
+                            className="flex-1 h-[42px] px-4 border rounded-lg bg-gray-50 dark:bg-[#1a1b20] border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+
+
+                        <Button
+                            type="button"
+                            onClick={handleSendCode}
+                            disabled={loading || codeSent}
+                            className="h-[42px] px-4 text-white"
+                        >
+                            {loading ? "..." : "Send"}
+                        </Button>
+
+                    </div>
+
+
+
+                    <form onSubmit={handleVerify} className="space-y-4">
+
+                        <input
+                            type="text"
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                            placeholder="Verification code"
+                            disabled={!codeSent}
+                            className="w-full h-[42px] px-4 border rounded-lg bg-gray-50 dark:bg-[#1a1b20] border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+
+
+                        <Button
+                            className="w-full h-[42px] text-white"
+                            disabled={!codeSent}
+                        >
+                            Verify Code
+                        </Button>
+
+                    </form>
+
+
+                </div>
 
             </div>
 
