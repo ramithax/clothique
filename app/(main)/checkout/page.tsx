@@ -8,10 +8,9 @@ import { checkOutAction } from "./checkout-action";
 import { useEffect, useState } from "react";
 
 export default function CheckoutPage() {
-    // ✅ Buy Now state
+
     const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
 
-    // ✅ Load Buy Now item from sessionStorage
     useEffect(() => {
         const item = sessionStorage.getItem("checkoutItem");
 
@@ -29,10 +28,9 @@ export default function CheckoutPage() {
         clearCart,
     } = useCartStore();
 
-    // ✅ Merge logic (Buy Now OR Cart)
     const items = buyNowItem ? [buyNowItem] : cartItems;
 
-    // ✅ Total calculation
+
     const total = items.reduce(
         (acc, item) => acc + item.price * item.quantity,
         0
@@ -44,7 +42,7 @@ export default function CheckoutPage() {
         }
     };
 
-    // ✅ Empty state (works for both modes)
+
     if (items.length === 0) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50 text-center">
@@ -117,7 +115,7 @@ export default function CheckoutPage() {
                                     </span>
                                 </div>
 
-                                {/* ❌ Disable quantity controls in Buy Now */}
+
                                 {!buyNowItem && (
                                     <div className="flex items-center gap-3">
                                         <Button
@@ -159,7 +157,7 @@ export default function CheckoutPage() {
                 </CardContent>
             </Card>
 
-            {/* Checkout Button */}
+
             <form
                 action={checkOutAction}
                 className="max-w-md mx-auto w-full flex justify-center"
