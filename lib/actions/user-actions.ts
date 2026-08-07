@@ -127,3 +127,43 @@ export async function updateUser(data: {
     }
 }
 
+export async function deleteUser(id: string) {
+
+    try {
+
+        const admin = await isAdmin()
+
+        if (!admin) {
+            return { success: false, message: "Not allowed" }
+        }
+
+        const deleted = await prisma.user.delete({
+            where: {
+                id: id
+            }
+        })
+
+        if (!deleted) {
+            return {
+                success: false,
+                message: "Failed to delete user"
+            }
+        }
+
+        return {
+            success: true,
+            data: deleted
+        }
+
+    } catch (error) {
+
+        console.log(error)
+
+        return {
+            success: false,
+            message: "Failed to delete user"
+        }
+
+    }
+}
+
