@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
 
             if (res.status === "success") {
                 toast.success("Code verified successfully")
-                router.push(`/reset-password?email=${email}`)
+                router.push(`/reset-password?email=${email}&code=${code}`)
 
             }
             else {

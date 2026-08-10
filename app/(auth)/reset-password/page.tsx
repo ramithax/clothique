@@ -4,20 +4,25 @@ import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
+import { resetPassword } from "@/lib/actions/auth-actions";
+import { useRouter } from "next/navigation";
 
 function ResetPasswordForm() {
     const searchParams = useSearchParams()
     const email = searchParams.get("email")
+    const code = searchParams.get("code")
 
     const [password, setPassword] = useState("")
     const [confirm, setConfirm] = useState("")
     const [loading, setLoading] = useState(false)
 
+    const router = useRouter()
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        if (!email) {
-            return toast.error("Invalid reset link (missing email)")
+        if (!email || !code) {
+            return toast.error("Invalid reset link")
         }
 
         if (password !== confirm) {
@@ -27,12 +32,22 @@ function ResetPasswordForm() {
         setLoading(true)
 
         try {
-            // call backend with email + password
+            const res = await resetPassword(email, code, password)
+
+            if (res.status === "success") {
+                toast.success("Password updated successfully")
+                router.push("/sign-in")
+            } else {
+                toast.error(res.message)
+            }
+
+        } catch (error) {
+            console.log(error)
+            toast.error("Something went wrong")
         } finally {
             setLoading(false)
         }
     }
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-[#0b0c10] px-4">
 
