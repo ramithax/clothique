@@ -162,9 +162,7 @@ export const requestPasswordReset = async (email: string) => {
 
 
 export const verifyResetCode = async (email: string, code: string) => {
-
     try {
-
         const record = await prisma.verification.findFirst({
             where: {
                 identifier: email,
@@ -173,24 +171,12 @@ export const verifyResetCode = async (email: string, code: string) => {
         })
 
         if (!record) {
-            return {
-                status: "error",
-                message: "Invalid or expired code"
-            }
+            return { status: "error", message: "Invalid or expired code" }
         }
 
         if (record.expiresAt < new Date()) {
-            return {
-                status: "error",
-                message: "Code expired"
-            }
+            return { status: "error", message: "Code expired" }
         }
-
-        await prisma.verification.delete({
-            where: {
-                id: record.id
-            }
-        })
 
         return {
             status: "success",
@@ -198,7 +184,6 @@ export const verifyResetCode = async (email: string, code: string) => {
         }
 
     } catch (error) {
-
         console.log(error)
         return {
             status: "error",
@@ -247,13 +232,13 @@ export const resetPassword = async (email: string, code: string, newPassword: st
             where: { identifier: email }
         })
 
-        return { success: true }
+        return { status: "success" }
 
     } catch (error) {
         console.log(error)
         return {
             status: "error",
-            message: "Failed to verify code"
+            message: "Failed to reset password"
         }
     }
 }
